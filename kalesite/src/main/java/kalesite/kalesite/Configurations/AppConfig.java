@@ -19,8 +19,10 @@ public class AppConfig {
 
         //dataSource.setUrl("jdbc:postgresql://localhost:5432/kalesite");
         dataSource.setUrl("jdbc:postgresql://localhost:5433/kaletest");
-        dataSource.setUsername("postgres");
-        dataSource.setPassword("bestuser");
+        //dataSource.setUsername("postgres");
+        //dataSource.setPassword("bestuser");
+        dataSource.setUsername("kale");
+        dataSource.setPassword("!1234567A@kale");
 
         return dataSource;
     }
