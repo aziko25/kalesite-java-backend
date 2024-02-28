@@ -1,9 +1,7 @@
-package kalesite.kalesite.Repositories;
+package kalesite.kalesite.Repositories.Products;
 
-import kalesite.kalesite.Models.Product_Subcategories;
+import kalesite.kalesite.Models.Products.Product_Subcategories;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository

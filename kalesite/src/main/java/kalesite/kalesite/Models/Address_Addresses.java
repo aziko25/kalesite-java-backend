@@ -14,20 +14,23 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "product_category")
-public class Product_Categories {
+@Table(name = "address_address")
+public class Address_Addresses {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private UUID guid;
+
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    private String title;
-    private String photo;
+    private String region;
+    private String district;
+    private String street;
 
-    private String titleEn;
-    private String titleRu;
-    private String titleUz;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User_Users userId;
 }

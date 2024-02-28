@@ -1,4 +1,4 @@
-package kalesite.kalesite.Models;
+package kalesite.kalesite.Models.Products;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -14,8 +14,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "product_subcategory")
-public class Product_Subcategories {
+@Table(name = "product_category")
+public class Product_Categories {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,11 +23,9 @@ public class Product_Subcategories {
 
     private UUID guid;
     private LocalDateTime createdAt;
-    private String title;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Product_Categories categoryId;
+    private String title;
+    private String photo;
 
     private String titleEn;
     private String titleRu;
