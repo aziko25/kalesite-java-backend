@@ -17,10 +17,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,20 +35,108 @@ public class OrdersController {
     private final Order_OrdersRepository order_ordersRepository;
     private final User_UsersRepository user_usersRepository;
 
+    private static final String SECRET_KEY = "s2FcNkUosXAZQh"; // Adapt based on your settings
+    private static final String AUTHORIZATION_FAIL_CODE = "authorization_fail_code";
+    private static final String ACTION_NOT_FOUND = "action_not_found";
+    private static final String TRANSACTION_NOT_FOUND = "transaction_not_found";
+    private static final String SUCCESS = "success";
+    private static final String PREPARE = "prepare_action_constant";
+    private static final String COMPLETE = "complete_action_constant";
+
+    public static Map<String, String> clickWebhookErrors(String clickTransId, String serviceId, String merchantTransId,
+                                                         String amount, String action, String signTime, String signString,
+                                                         String merchantPrepareId) {
+        Map<String, String> result = new HashMap<>();
+        merchantPrepareId = action != null && action.equals("1") ? merchantPrepareId : "";
+
+        String createdSignString = clickTransId + serviceId + SECRET_KEY + merchantTransId + merchantPrepareId + amount + action + signTime;
+        String generatedSignString;
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(createdSignString.getBytes());
+            byte[] digest = md.digest();
+            StringBuilder sb = new StringBuilder();
+            for (byte b : digest) {
+                sb.append(String.format("%02x", b));
+            }
+            generatedSignString = sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            result.put("error", "md5_error");
+            result.put("error_note", "MD5 algorithm not found");
+            return result;
+        }
+
+        if (!generatedSignString.equals(signString)) {
+            result.put("error", AUTHORIZATION_FAIL_CODE);
+            result.put("error_note", "SIGN CHECK FAILED!"); // Adapt localization
+            return result;
+        }
+
+        if (!action.equals(PREPARE) && !action.equals(COMPLETE)) {
+            result.put("error", ACTION_NOT_FOUND);
+            result.put("error_note", "Action not found"); // Adapt localization
+            return result;
+        }
+
+        if (action.equals(COMPLETE) && !merchantTransId.equals(merchantPrepareId)) {
+            result.put("error", TRANSACTION_NOT_FOUND);
+            result.put("error_note", "Transaction not found"); // Adapt localization
+            return result;
+        }
+
+        result.put("error", SUCCESS);
+        result.put("error_note", "Success"); // Adapt localization
+        return result;
+    }
+
+
     @PostMapping("/prepare-order")
-    public ResponseEntity<?> prepareOrder() {
+    public ResponseEntity<?> prepareOrder(@RequestBody Map<String, String> requestData) {
+        // Extract parameters from request data
+        String clickTransId = requestData.get("click_trans_id");
+        String serviceId = requestData.get("service_id");
+        String clickPaydocId = requestData.get("click_paydoc_id");
+        String merchantTransId = requestData.get("merchant_trans_id");
+        String amount = requestData.get("amount");
+        String action = requestData.get("action");
+        String signTime = requestData.get("sign_time");
+        String signString = requestData.get("sign_string");
+        String error = requestData.get("error");
+        String errorNote = requestData.get("error_note");
 
-        System.out.println("prepare order");
+        // Assuming clickWebhookErrors, orderLoad and other methods are implemented elsewhere
+        Map<String, String> result = clickWebhookErrors(clickTransId, serviceId, merchantTransId, amount, action, signTime, signString, error);
 
-        return ResponseEntity.ok("Ok");
+        result.put("click_trans_id", clickTransId);
+        result.put("merchant_trans_id", merchantTransId);
+        result.put("merchant_prepare_id", merchantTransId);
+        result.put("merchant_confirm_id", merchantTransId);
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("/complete-order")
-    public ResponseEntity<?> completeOrder() {
+    public ResponseEntity<?> completeOrder(@RequestBody Map<String, String> requestData) {
+        // Extract parameters
+        String clickTransId = requestData.get("click_trans_id");
+        String serviceId = requestData.get("service_id");
+        String clickPaydocId = requestData.get("click_paydoc_id");
+        String merchantTransId = requestData.get("merchant_trans_id");
+        String amount = requestData.get("amount");
+        String action = requestData.get("action");
+        String signTime = requestData.get("sign_time");
+        String signString = requestData.get("sign_string");
+        String error = requestData.get("error");
+        String errorNote = requestData.get("error_note");
+        String merchantPrepareId = requestData.getOrDefault("merchant_prepare_id", null);
 
-        System.out.println("complete order");
-
-        return ResponseEntity.ok("Ok");
+        // Similar logic for loading order and handling errors
+        Map<String, String> result = clickWebhookErrors(clickTransId, serviceId, merchantTransId, amount, action, signTime, signString, merchantPrepareId);
+        result.put("click_trans_id", clickTransId);
+        result.put("merchant_trans_id", merchantTransId);
+        result.put("merchant_prepare_id", merchantPrepareId);
+        result.put("merchant_confirm_id", merchantPrepareId);
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("/create-order")
