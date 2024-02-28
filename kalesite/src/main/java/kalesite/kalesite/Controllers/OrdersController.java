@@ -38,11 +38,15 @@ public class OrdersController {
     @PostMapping("/prepare-order")
     public ResponseEntity<?> prepareOrder() {
 
+        System.out.println("prepare order");
+
         return ResponseEntity.ok("Ok");
     }
 
     @PostMapping("/complete-order")
     public ResponseEntity<?> completeOrder() {
+
+        System.out.println("complete order");
 
         return ResponseEntity.ok("Ok");
     }
@@ -50,6 +54,8 @@ public class OrdersController {
     @PostMapping("/create-order")
     @Transactional
     public ResponseEntity<?> createOrder(@RequestBody OrderBody body) {
+
+        System.out.println("create order");
 
         List<Order_OrderProducts> order_orderProductsList = new ArrayList<>();
 
@@ -111,7 +117,7 @@ public class OrdersController {
 
         if (order.getPaymentType() == 2) {
 
-            billingUrl.setBilling_url("https://my.click.uz/services/pay?service_id=28420&merchant_id=11369&return_url=https://kale.uz/profile/purchases-history&amount=" + order.getTotalAmount() + "&transaction_param=" + order.getId());
+            billingUrl.setBilling_url("https://my.click.uz/services/pay?service_id=28420&merchant_id=11369&return_url=https://kale.uz/profile/purchases-history&amount=" + orderTotalSum + "&transaction_param=" + order.getId());
         }
 
         return ResponseEntity.ok(billingUrl);
