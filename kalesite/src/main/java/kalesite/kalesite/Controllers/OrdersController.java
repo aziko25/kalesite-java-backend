@@ -92,6 +92,11 @@ public class OrdersController {
         String orderMessage = order_order_productsList.get(0).getOrderId().getUserId().getPhone() + " "
                 + order_order_productsList.get(0).getOrderId().getUserId().getName();
 
+        Order_Orders order = order_ordersRepository.findById(order_order_productsList.get(0).getOrderId().getId()).orElseThrow();
+        order.setStatus(0);
+        order.setPaymentStatus("Оплачено");
+        order_ordersRepository.save(order);
+
         for (Order_Order_Products order_order_products : order_order_productsList) {
 
             Order_OrderProducts order_orderProducts = order_orderProductRepository.findById(order_order_products.getId()).orElseThrow();
@@ -151,7 +156,7 @@ public class OrdersController {
         order.setTotalAmount(orderTotalSum);
         order.setInstallation(body.getInstallation());
         order.setOrderedTime(LocalDateTime.now());
-        order.setStatus(0);
+        order.setStatus(1);
         order.setComment(body.getComment());
         order.setPaymentStatus("waiting");
         order.setPaymentType(body.getPaymentType());
