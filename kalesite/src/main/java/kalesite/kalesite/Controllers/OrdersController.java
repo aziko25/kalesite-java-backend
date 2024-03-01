@@ -43,7 +43,22 @@ public class OrdersController {
     public ResponseEntity<?> prepareOrder(@RequestParam Map<String, String> body) {
 
         System.out.println("Prepare Order API Request Received");
-        return ResponseEntity.ok("ok");
+
+        String clickTransId = body.get("click_trans_id");
+        String merchantTransId = body.get("merchant_trans_id");
+
+        String error = "0";
+        String errorNote = "Success";
+
+        Map<String, String> response = new HashMap<>();
+
+        response.put("click_trans_id", clickTransId);
+        response.put("merchant_trans_id", merchantTransId);
+        response.put("merchant_prepare_id", merchantTransId);
+        response.put("error", error);
+        response.put("error_note", errorNote);
+
+        return ResponseEntity.ok(response);
     }
 
 
