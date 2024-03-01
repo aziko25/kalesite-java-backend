@@ -64,11 +64,39 @@ public class OrdersController {
 
     @PostMapping("/complete-order")
     public ResponseEntity<?> completeOrder(@RequestParam Map<String, String> body) {
-
         System.out.println("Complete Order API Request Received");
 
-        return ResponseEntity.ok("ok");
+        // Получение параметров из запроса
+        String clickTransId = body.get("click_trans_id");
+        String serviceId = body.get("service_id");
+        String clickPaydocId = body.get("click_paydoc_id");
+        String merchantTransId = body.get("merchant_trans_id");
+        String merchantPrepareId = body.get("merchant_prepare_id");
+        String amount = body.get("amount");
+        String action = body.get("action"); // Должно быть 1 для Complete
+        String error = body.get("error"); // Статус завершения платежа
+        String signTime = body.get("sign_time");
+        // Проверка подписи, как описано в документации, не показана здесь
+
+        // Логика проверки статуса заказа и обработки завершения платежа
+        // Это может включать в себя проверку, был ли платеж уже обработан, корректность суммы и т.д.
+
+        // Пример ответа
+        Map<String, Object> response = new HashMap<>();
+        response.put("click_trans_id", clickTransId);
+        response.put("merchant_trans_id", merchantTransId);
+        // Этот ID должен быть реальным ID транзакции завершения платежа в вашей системе, может быть null, если ошибка
+        int merchantConfirmId = error.equals("0") ? /* Получить ID транзакции завершения из вашей системы */ 1 : null;
+        response.put("merchant_confirm_id", merchantConfirmId);
+        response.put("error", error); // "0" для успешного завершения, другое значение для ошибки
+        response.put("error_note", "Success"); // Или описание ошибки, если таковая имеется
+
+        // В зависимости от результата обработки, измените error и error_note соответственно
+        // Например, если платеж не может быть завершен по какой-либо причине, укажите соответствующий код ошибки и описание
+
+        return ResponseEntity.ok(response);
     }
+
 
     @PostMapping("/create-order")
     @Transactional
