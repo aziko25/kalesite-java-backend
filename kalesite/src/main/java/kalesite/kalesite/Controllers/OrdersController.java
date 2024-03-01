@@ -36,20 +36,21 @@ public class OrdersController {
     private final User_UsersRepository user_usersRepository;
 
     private static final String SECRET_KEY = "s2FcNkUosXAZQh";
+    private static final String MERCHANT_USER_ID = "33370";
 
 
     @PostMapping("/prepare-order")
-    public ResponseEntity<?> prepareOrder() {
+    public ResponseEntity<?> prepareOrder(@RequestBody Map<String, String> body) {
 
-        System.out.println("Prepare Order API Request Sent");
+        System.out.println("Prepare Order API Request Received");
 
         return ResponseEntity.ok("ok");
     }
 
     @PostMapping("/complete-order")
-    public ResponseEntity<?> completeOrder() {
+    public ResponseEntity<?> completeOrder(@RequestBody Map<String, String> body) {
 
-        System.out.println("Complete Order API Request Sent");
+        System.out.println("Complete Order API Request Received");
 
         return ResponseEntity.ok("ok");
     }
@@ -120,7 +121,7 @@ public class OrdersController {
 
         if (order.getPaymentType() == 2) {
 
-            billingUrl.setBilling_url("https://my.click.uz/services/pay?service_id=28420&merchant_id=11369&return_url=https://kale.uz/profile/purchases-history&amount=" + orderTotalSum + "&transaction_param=" + order.getId());
+            billingUrl.setBilling_url("https://my.click.uz/services/pay?service_id=28420&merchant_id=11369&return_url=https://kale.mdholding.uz/profile/purchases-history&amount=" + orderTotalSum + "&transaction_param=" + order.getId());
         }
 
         return ResponseEntity.ok(billingUrl);
