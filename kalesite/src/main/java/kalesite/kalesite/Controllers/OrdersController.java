@@ -11,11 +11,15 @@ import kalesite.kalesite.Repositories.Orders.Order_Order_ProductsRepository;
 import kalesite.kalesite.Repositories.Orders.Order_OrdersRepository;
 import kalesite.kalesite.Repositories.Products.Product_ProductsRepository;
 import kalesite.kalesite.Repositories.User_UsersRepository;
+import kalesite.kalesite.Telegram.MainTelegramBot;
 import lombok.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -34,10 +38,10 @@ public class OrdersController {
     private final Order_OrderProductRepository order_orderProductRepository;
     private final Order_OrdersRepository order_ordersRepository;
     private final User_UsersRepository user_usersRepository;
+    private final MainTelegramBot telegramBot;
 
-    private static final String SECRET_KEY = "s2FcNkUosXAZQh";
-    private static final String MERCHANT_USER_ID = "33370";
-
+    @Value("${chat_id}")
+    private String chatId;
 
     @PostMapping("/prepare-order")
     public ResponseEntity<?> prepareOrder(@RequestParam Map<String, String> body) {
@@ -64,39 +68,49 @@ public class OrdersController {
 
     @PostMapping("/complete-order")
     public ResponseEntity<?> completeOrder(@RequestParam Map<String, String> body) {
+
         System.out.println("Complete Order API Request Received");
 
         // Получение параметров из запроса
         String clickTransId = body.get("click_trans_id");
-        String serviceId = body.get("service_id");
-        String clickPaydocId = body.get("click_paydoc_id");
         String merchantTransId = body.get("merchant_trans_id");
-        String merchantPrepareId = body.get("merchant_prepare_id");
-        String amount = body.get("amount");
-        String action = body.get("action"); // Должно быть 1 для Complete
-        String error = body.get("error"); // Статус завершения платежа
-        String signTime = body.get("sign_time");
-        // Проверка подписи, как описано в документации, не показана здесь
-
-        // Логика проверки статуса заказа и обработки завершения платежа
-        // Это может включать в себя проверку, был ли платеж уже обработан, корректность суммы и т.д.
+        String error = body.get("error");
 
         // Пример ответа
         Map<String, Object> response = new HashMap<>();
+
         response.put("click_trans_id", clickTransId);
         response.put("merchant_trans_id", merchantTransId);
-        // Этот ID должен быть реальным ID транзакции завершения платежа в вашей системе, может быть null, если ошибка
         int merchantConfirmId = error.equals("0") ? /* Получить ID транзакции завершения из вашей системы */ 1 : null;
         response.put("merchant_confirm_id", merchantConfirmId);
         response.put("error", error); // "0" для успешного завершения, другое значение для ошибки
         response.put("error_note", "Success"); // Или описание ошибки, если таковая имеется
 
-        // В зависимости от результата обработки, измените error и error_note соответственно
-        // Например, если платеж не может быть завершен по какой-либо причине, укажите соответствующий код ошибки и описание
+        Long orderId = Long.valueOf(body.get("merchant_trans_id"));
+        List<Order_Order_Products> order_order_productsList = order_order_productsRepository.findAllById(Collections.singleton(orderId));
+
+        String orderMessage = order_order_productsList.get(0).getOrderId().getUserId().getPhone() + " "
+                + order_order_productsList.get(0).getOrderId().getUserId().getName();
+
+        for (Order_Order_Products order_order_products : order_order_productsList) {
+
+            Order_OrderProducts order_orderProducts = order_orderProductRepository.findById(order_order_products.getId()).orElseThrow();
+
+            orderMessage = orderMessage + "\n" + order_orderProducts.getProductId().getTitle() +
+                    ", Code: " + order_orderProducts.getProductId().getCode()
+                    + ", Количество: " + order_orderProducts.getQuantity() +
+                    ", Сумма: " + order_orderProducts.getOrderPrice();
+        }
+
+        SendMessage message = new SendMessage();
+
+        message.setText(orderMessage);
+        message.setChatId(chatId);
+
+        telegramBot.sendMessage(message);
 
         return ResponseEntity.ok(response);
     }
-
 
     @PostMapping("/create-order")
     @Transactional
