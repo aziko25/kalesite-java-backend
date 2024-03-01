@@ -40,15 +40,15 @@ public class OrdersController {
 
 
     @PostMapping("/prepare-order")
-    public ResponseEntity<?> prepareOrder(@RequestBody Map<String, String> body) {
+    public ResponseEntity<?> prepareOrder(@RequestParam Map<String, String> body) {
 
         System.out.println("Prepare Order API Request Received");
-
         return ResponseEntity.ok("ok");
     }
 
+
     @PostMapping("/complete-order")
-    public ResponseEntity<?> completeOrder(@RequestBody Map<String, String> body) {
+    public ResponseEntity<?> completeOrder(@RequestParam Map<String, String> body) {
 
         System.out.println("Complete Order API Request Received");
 
