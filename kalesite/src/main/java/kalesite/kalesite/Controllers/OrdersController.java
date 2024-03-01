@@ -87,15 +87,16 @@ public class OrdersController {
         response.put("error_note", "Success"); // Или описание ошибки, если таковая имеется
 
         Long orderId = Long.valueOf(body.get("merchant_trans_id"));
-        List<Order_Order_Products> order_order_productsList = order_order_productsRepository.findAllById(Collections.singleton(orderId));
 
-        String orderMessage = order_order_productsList.get(0).getOrderId().getUserId().getPhone() + " "
-                + order_order_productsList.get(0).getOrderId().getUserId().getName();
-
-        Order_Orders order = order_ordersRepository.findById(order_order_productsList.get(0).getOrderId().getId()).orElseThrow();
+        Order_Orders order = order_ordersRepository.findById(orderId).orElseThrow();
         order.setStatus(0);
         order.setPaymentStatus("Оплачено");
         order_ordersRepository.save(order);
+
+        List<Order_Order_Products> order_order_productsList = order_order_productsRepository.findAllByOrderId(order);
+
+        String orderMessage = order_order_productsList.get(0).getOrderId().getUserId().getPhone() + " "
+                + order_order_productsList.get(0).getOrderId().getUserId().getName();
 
         for (Order_Order_Products order_order_products : order_order_productsList) {
 
