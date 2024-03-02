@@ -113,17 +113,14 @@ public class ProductsServices {
                 mainTelegramBot.sendMessage(message);
             }
 
-            System.out.println("here $1");
             batchInsertNewProducts(newProducts);
-            System.out.println("here $2");
             batchUpdateExistingProducts(updateProducts);
 
-            System.out.println("here $3");
             long endTime = System.currentTimeMillis();
             long timeSpent = (endTime - startTime) / 1000;
 
             SendMessage message = new SendMessage();
-            System.out.println("Operation completed in " + timeSpent + " seconds!");
+
             message.setChatId(chatId);
             message.setText("Operation Products Update completed in " + timeSpent + " seconds!");
             mainTelegramBot.sendMessage(message);
@@ -136,8 +133,6 @@ public class ProductsServices {
     }
 
     private void batchInsertNewProducts(List<Map<String, Object>> newProducts) {
-
-        System.out.println("batch ins 1");
 
         String sql = """
             INSERT INTO Product_Product ("isTop", status, created_at, title, title_ru, code, 
@@ -183,8 +178,6 @@ public class ProductsServices {
                 return newProducts.size();
             }
         });
-
-        System.out.println("batch ins 2");
     }
 
 
