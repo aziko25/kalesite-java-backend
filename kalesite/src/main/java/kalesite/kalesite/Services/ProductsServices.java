@@ -190,7 +190,7 @@ public class ProductsServices {
 
     private void batchUpdateExistingProducts(List<Map<String, Object>> updateProducts) {
 
-        String sql = "UPDATE Product_Product SET quantity = ?, price = ?, \"discountPrice\" = ?, discount = ? WHERE code = ?";
+        String sql = "UPDATE Product_Product SET quantity = ?, price = ?, \"discountPrice\" = ? WHERE code = ?";
 
         this.jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
@@ -203,13 +203,6 @@ public class ProductsServices {
                 ps.setDouble(2, ((Number) product.get("Цена")).doubleValue());
                 ps.setDouble(3, ((Number) product.get("ЦенаСоСкидкой")).doubleValue());
                 ps.setString(4, (String) product.get("Код"));
-
-                double price = ((Number) product.get("Цена")).doubleValue(); // price
-                double discountPrice = ((Number) product.get("ЦенаСоСкидкой")).doubleValue(); // discount_price
-
-                double salePercent = ((price - discountPrice) / price) * 100;
-
-                ps.setDouble(5, salePercent);
             }
 
             @Override
