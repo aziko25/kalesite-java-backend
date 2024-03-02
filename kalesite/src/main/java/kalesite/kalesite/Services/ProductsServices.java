@@ -5,6 +5,8 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kalesite.kalesite.Models.Products.Product_Categories;
+import kalesite.kalesite.Repositories.Products.Product_CategoriesRepository;
 import kalesite.kalesite.Telegram.MainTelegramBot;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,6 +45,7 @@ public class ProductsServices {
 
     private final MainTelegramBot mainTelegramBot;
     private final JdbcTemplate jdbcTemplate;
+    private final Product_CategoriesRepository product_categoriesRepository;
 
     @Transactional
     @SuppressWarnings("unchecked")
@@ -80,7 +83,10 @@ public class ProductsServices {
             List<Map<String, Object>> updateProducts = new ArrayList<>();
             Set<String> duplicateCodes = new HashSet<>(); // Track duplicates found during processing
 
+            Integer count = 0;
             for (Map<String, Object> product : products) {
+                System.out.println(count);
+                count++;
                 String code = (String) product.get("Код");
 
                 // Check against the database counts to find pre-existing duplicates
@@ -107,13 +113,17 @@ public class ProductsServices {
                 mainTelegramBot.sendMessage(message);
             }
 
+            System.out.println("here $1");
             batchInsertNewProducts(newProducts);
+            System.out.println("here $2");
             batchUpdateExistingProducts(updateProducts);
 
+            System.out.println("here $3");
             long endTime = System.currentTimeMillis();
             long timeSpent = (endTime - startTime) / 1000;
 
             SendMessage message = new SendMessage();
+            System.out.println("Operation completed in " + timeSpent + " seconds!");
             message.setChatId(chatId);
             message.setText("Operation Products Update completed in " + timeSpent + " seconds!");
             mainTelegramBot.sendMessage(message);
@@ -126,6 +136,9 @@ public class ProductsServices {
     }
 
     private void batchInsertNewProducts(List<Map<String, Object>> newProducts) {
+
+        System.out.println("batch ins 1");
+
         String sql = """
             INSERT INTO Product_Product ("isTop", status, created_at, title, title_ru, code, 
                                         unit, size, description, description_ru, manufacturer, manufacturer_ru, brand, 
@@ -162,6 +175,8 @@ public class ProductsServices {
                 return newProducts.size();
             }
         });
+
+        System.out.println("batch ins 2");
     }
 
 
@@ -203,15 +218,19 @@ public class ProductsServices {
         }
         catch (EmptyResultDataAccessException e) {
 
+            Product_Categories product_categories = product_categoriesRepository.findTopByOrderByIdAsc();
+
             KeyHolder keyHolder = new GeneratedKeyHolder();
             String finalCategoryTitle = categoryTitle;
             jdbcTemplate.update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(
-                        "INSERT INTO Product_Subcategory (title, title_ru, created_at) VALUES (?, ?, ?)",
+                        "INSERT INTO Product_Subcategory (title, title_ru, created_at, guid, category_id) VALUES (?, ?, ?, ?, ?)",
                         Statement.RETURN_GENERATED_KEYS);
                 ps.setString(1, finalCategoryTitle);
                 ps.setString(2, finalCategoryTitle);
                 ps.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
+                ps.setObject(4, UUID.randomUUID());
+                ps.setLong(5, product_categories.getId());
                 return ps;
             }, keyHolder);
 

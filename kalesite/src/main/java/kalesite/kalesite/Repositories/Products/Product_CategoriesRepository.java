@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface Product_CategoriesRepository extends JpaRepository<Product_Categories, Long> {
+
+    Product_Categories findTopByOrderByIdAsc();
 }
