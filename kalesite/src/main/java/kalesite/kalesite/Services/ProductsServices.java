@@ -142,7 +142,7 @@ public class ProductsServices {
         String sql = """
             INSERT INTO Product_Product ("isTop", status, created_at, title, title_ru, code, 
                                         unit, size, description, description_ru, manufacturer, manufacturer_ru, brand, 
-                                        brand_ru, quantity, price, discount_price, subcategory_id) 
+                                        brand_ru, quantity, price, "discountPrice", subcategory_id) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""";
 
         this.jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
