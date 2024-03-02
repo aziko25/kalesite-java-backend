@@ -46,21 +46,16 @@ public class OrdersController {
     @PostMapping("/prepare-order")
     public ResponseEntity<?> prepareOrder(@RequestParam Map<String, String> body) {
 
-        System.out.println("Prepare Order API Request Received");
-
         String clickTransId = body.get("click_trans_id");
         String merchantTransId = body.get("merchant_trans_id");
-
-        String error = "0";
-        String errorNote = "Success";
 
         Map<String, String> response = new HashMap<>();
 
         response.put("click_trans_id", clickTransId);
         response.put("merchant_trans_id", merchantTransId);
         response.put("merchant_prepare_id", merchantTransId);
-        response.put("error", error);
-        response.put("error_note", errorNote);
+        response.put("error", "0");
+        response.put("error_note", "Success");
 
         return ResponseEntity.ok(response);
     }
@@ -69,48 +64,48 @@ public class OrdersController {
     @PostMapping("/complete-order")
     public ResponseEntity<?> completeOrder(@RequestParam Map<String, String> body) {
 
-        System.out.println("Complete Order API Request Received");
-
-        // Получение параметров из запроса
         String clickTransId = body.get("click_trans_id");
         String merchantTransId = body.get("merchant_trans_id");
         String error = body.get("error");
 
-        // Пример ответа
         Map<String, Object> response = new HashMap<>();
 
         response.put("click_trans_id", clickTransId);
         response.put("merchant_trans_id", merchantTransId);
-        int merchantConfirmId = error.equals("0") ? /* Получить ID транзакции завершения из вашей системы */ 1 : null;
+        Integer merchantConfirmId = error.equals("0") ? 1 : null;
         response.put("merchant_confirm_id", merchantConfirmId);
-        response.put("error", error); // "0" для успешного завершения, другое значение для ошибки
-        response.put("error_note", "Success"); // Или описание ошибки, если таковая имеется
+        response.put("error", error);
+        response.put("error_note", "Success");
 
         Long orderId = Long.valueOf(body.get("merchant_trans_id"));
 
         Order_Orders order = order_ordersRepository.findById(orderId).orElseThrow();
+
         order.setStatus(0);
         order.setPaymentStatus("Оплачено");
         order_ordersRepository.save(order);
 
         List<Order_Order_Products> order_order_productsList = order_order_productsRepository.findAllByOrderId(order);
 
-        String orderMessage = order_order_productsList.get(0).getOrderId().getUserId().getPhone() + " "
-                + order_order_productsList.get(0).getOrderId().getUserId().getName();
+        StringBuilder orderMessage = new StringBuilder("Новый Заказ:\n" + order.getCode() + " " +
+                order_order_productsList.get(0).getOrderId().getUserId().getPhone() + " "
+                + order_order_productsList.get(0).getOrderId().getUserId().getName());
 
         for (Order_Order_Products order_order_products : order_order_productsList) {
 
+            System.out.println(order_order_products.getId() + " " + order_order_products.getOrderProductId().getId());
+
             Order_OrderProducts order_orderProducts = order_orderProductRepository.findById(order_order_products.getId()).orElseThrow();
 
-            orderMessage = orderMessage + "\n" + order_orderProducts.getProductId().getTitle() +
-                    ", Code: " + order_orderProducts.getProductId().getCode()
-                    + ", Количество: " + order_orderProducts.getQuantity() +
-                    ", Сумма: " + order_orderProducts.getOrderPrice();
+            orderMessage.append("\n").append(order_orderProducts.getProductId().getTitle())
+                    .append(", Code: ").append(order_orderProducts.getProductId().getCode())
+                    .append(", Количество: ").append(order_orderProducts.getQuantity())
+                    .append(", Сумма: ").append(order_orderProducts.getOrderPrice());
         }
 
         SendMessage message = new SendMessage();
 
-        message.setText(orderMessage);
+        message.setText(orderMessage.toString());
         message.setChatId(chatId);
 
         telegramBot.sendMessage(message);
