@@ -142,8 +142,8 @@ public class ProductsServices {
         String sql = """
             INSERT INTO Product_Product ("isTop", status, created_at, title, title_ru, code, 
                                         unit, size, description, description_ru, manufacturer, manufacturer_ru, brand, 
-                                        brand_ru, quantity, price, "discountPrice", subcategory_id) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""";
+                                        brand_ru, quantity, price, "discountPrice", subcategory_id, guid) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""";
 
         this.jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
@@ -168,6 +168,7 @@ public class ProductsServices {
                 ps.setDouble(16, ((Number) product.get("Цена")).doubleValue()); // price
                 ps.setDouble(17, ((Number) product.get("ЦенаСоСкидкой")).doubleValue()); // discount_price
                 ps.setLong(18, getOrInsertSubcategoryId((String) product.get("Категория"))); // subcategory_id
+                ps.setObject(19, UUID.randomUUID());
             }
 
             @Override
