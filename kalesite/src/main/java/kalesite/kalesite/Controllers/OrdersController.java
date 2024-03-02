@@ -107,11 +107,16 @@ public class OrdersController {
             order.setPaymentStatus("Оплачено");
             order_ordersRepository.save(order);
 
+            String comment = null;
+            if (order.getComment() != null) {
+                comment = "\n" + order.getComment();
+            }
+
             StringBuilder orderMessage = new StringBuilder("Новый Заказ:\n\n" + order.getCode() + " " +
                     order_order_productsList.get(0).getOrderId().getUserId().getPhone() + " "
                     + order_order_productsList.get(0).getOrderId().getUserId().getName()
                     + "\nАдрес: " + order_order_productsList.get(0).getOrderId().getAddressId().getRegion() + " " + order_order_productsList.get(0).getOrderId().getAddressId().getDistrict() + " " + order_order_productsList.get(0).getOrderId().getAddressId().getStreet()
-                    + "\n---------------------");
+                    + comment + "\n---------------------");
 
             for (Order_Order_Products order_order_products : order_order_productsList) {
 
