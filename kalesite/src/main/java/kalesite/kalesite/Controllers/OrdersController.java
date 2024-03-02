@@ -74,8 +74,8 @@ public class OrdersController {
         response.put("merchant_trans_id", merchantTransId);
         Integer merchantConfirmId = error.equals("0") ? 1 : null;
         response.put("merchant_confirm_id", merchantConfirmId);
-        response.put("error", error);
-        response.put("error_note", "Success");
+        response.put("error", -1905);
+        response.put("error_note", "Тестик");
 
         Long orderId = Long.valueOf(body.get("merchant_trans_id"));
 
