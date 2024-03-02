@@ -1,6 +1,7 @@
 package kalesite.kalesite.Controllers;
 
 import jakarta.persistence.EntityNotFoundException;
+import kalesite.kalesite.Models.Address_Addresses;
 import kalesite.kalesite.Models.Orders.Order_OrderProducts;
 import kalesite.kalesite.Models.Orders.Order_Order_Products;
 import kalesite.kalesite.Models.Orders.Order_Orders;
@@ -15,14 +16,10 @@ import kalesite.kalesite.Telegram.MainTelegramBot;
 import lombok.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -32,7 +29,6 @@ import java.util.*;
 @CrossOrigin(maxAge = 3600)
 public class OrdersController {
 
-    private final JdbcTemplate jdbcTemplate;
     private final Product_ProductsRepository productProductsRepository;
     private final Order_Order_ProductsRepository order_order_productsRepository;
     private final Order_OrderProductRepository order_orderProductRepository;
@@ -74,41 +70,71 @@ public class OrdersController {
         response.put("merchant_trans_id", merchantTransId);
         Integer merchantConfirmId = error.equals("0") ? 1 : null;
         response.put("merchant_confirm_id", merchantConfirmId);
-        response.put("error", -1905);
-        response.put("error_note", "Тестик");
 
         Long orderId = Long.valueOf(body.get("merchant_trans_id"));
 
         Order_Orders order = order_ordersRepository.findById(orderId).orElseThrow();
 
-        order.setStatus(0);
-        order.setPaymentStatus("Оплачено");
-        order_ordersRepository.save(order);
-
         List<Order_Order_Products> order_order_productsList = order_order_productsRepository.findAllByOrderId(order);
 
-        StringBuilder orderMessage = new StringBuilder("Новый Заказ:\n" + order.getCode() + " " +
-                order_order_productsList.get(0).getOrderId().getUserId().getPhone() + " "
-                + order_order_productsList.get(0).getOrderId().getUserId().getName());
+        boolean itemEnded = false;
 
         for (Order_Order_Products order_order_products : order_order_productsList) {
 
-            System.out.println(order_order_products.getId() + " " + order_order_products.getOrderProductId().getId());
+            if (order_order_products.getOrderProductId().getProductId().getQuantity() == 0) {
 
-            Order_OrderProducts order_orderProducts = order_orderProductRepository.findById(order_order_products.getId()).orElseThrow();
+                itemEnded = true;
 
-            orderMessage.append("\n").append(order_orderProducts.getProductId().getTitle())
-                    .append(", Code: ").append(order_orderProducts.getProductId().getCode())
-                    .append(", Количество: ").append(order_orderProducts.getQuantity())
-                    .append(", Сумма: ").append(order_orderProducts.getOrderPrice());
+                break;
+            }
         }
 
-        SendMessage message = new SendMessage();
+        if (itemEnded) {
 
-        message.setText(orderMessage.toString());
-        message.setChatId(chatId);
+            response.put("error", "-1905");
+            response.put("error_note", "Товар Закончился!");
 
-        telegramBot.sendMessage(message);
+            order.setStatus(4);
+            order.setPaymentStatus("Отменен");
+            order_ordersRepository.save(order);
+        }
+        else {
+
+            response.put("error", "0");
+            response.put("error_note", "Success");
+
+            order.setStatus(0);
+            order.setPaymentStatus("Оплачено");
+            order_ordersRepository.save(order);
+
+            StringBuilder orderMessage = new StringBuilder("Новый Заказ:\n\n" + order.getCode() + " " +
+                    order_order_productsList.get(0).getOrderId().getUserId().getPhone() + " "
+                    + order_order_productsList.get(0).getOrderId().getUserId().getName()
+                    + "\nАдрес: " + order_order_productsList.get(0).getOrderId().getAddressId().getRegion() + " " + order_order_productsList.get(0).getOrderId().getAddressId().getDistrict() + " " + order_order_productsList.get(0).getOrderId().getAddressId().getStreet()
+                    + "\n---------------------");
+
+            for (Order_Order_Products order_order_products : order_order_productsList) {
+
+                System.out.println(order_order_products.getId() + " " + order_order_products.getOrderProductId().getId());
+
+                Order_OrderProducts order_orderProducts = order_orderProductRepository.findById(order_order_products.getOrderProductId().getId()).orElseThrow();
+
+                System.out.println(order_orderProducts.getId() + ", Количество: " + order_orderProducts.getQuantity());
+
+                orderMessage.append("\nИмя Товара: ").append(order_orderProducts.getProductId().getTitle())
+                        .append("\nКод Товара: ").append(order_orderProducts.getProductId().getCode())
+                        .append("\nКоличество: ").append(order_orderProducts.getQuantity())
+                        .append("\nСумма: ").append(order_orderProducts.getOrderPrice())
+                        .append("\n--------------");
+            }
+
+            SendMessage message = new SendMessage();
+
+            message.setText(orderMessage.toString());
+            message.setChatId(chatId);
+
+            telegramBot.sendMessage(message);
+        }
 
         return ResponseEntity.ok(response);
     }
@@ -130,7 +156,7 @@ public class OrdersController {
             orderProducts.setGuid(UUID.randomUUID());
             orderProducts.setCreatedAt(LocalDateTime.now());
             orderProducts.setQuantity(product.getQuantity());
-            orderProducts.setOrderPrice(product.getOrderPrice());
+            orderProducts.setOrderPrice(product.getOrderPrice() * product.getQuantity());
 
             Product_Products productEntity = productProductsRepository.findById(product.getProduct())
                     .orElseThrow(() -> new EntityNotFoundException("Product not found with ID: " + product.getProduct()));
@@ -156,6 +182,10 @@ public class OrdersController {
         order.setComment(body.getComment());
         order.setPaymentStatus("waiting");
         order.setPaymentType(body.getPaymentType());
+
+        Address_Addresses address = new Address_Addresses();
+        address.setId(body.getAddress());
+        order.setAddressId(address);
 
         User_Users user = user_usersRepository.findById(body.getUser()).orElseThrow();
         order.setUserId(user);
@@ -202,7 +232,7 @@ public class OrdersController {
 
         private Long user;
         private List<Product> products;
-        private Integer address;
+        private Long address;
         private Boolean installation;
         private String comment;
         private Integer paymentType;
