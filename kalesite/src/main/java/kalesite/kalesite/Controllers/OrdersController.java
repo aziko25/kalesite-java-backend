@@ -216,8 +216,29 @@ public class OrdersController {
 
             billingUrl.setBilling_url("https://my.click.uz/services/pay?service_id=28420&merchant_id=11369&return_url=https://kale.mdholding.uz/profile/purchases-history&amount=" + orderTotalSum + "&transaction_param=" + order.getId());
         }
+        else if (order.getPaymentType() == 1) {
+
+            String baseUrl = "https://checkout.paycom.uz";
+            String merchantId = "65e2f91cf4193eeca0afd4b0";
+            long amount = (long) (orderTotalSum * 100);
+            String orderId = order.getId().toString();
+            String returnUrl = "https://kale.mdholding.uz/profile/purchases-history";
+
+            String paymeUrl = String.format("%s/transfer?merchant=%s&amount=%d&account[order_id]=%s&return_url=%s",
+                    baseUrl, merchantId, amount, orderId, returnUrl);
+
+            billingUrl.setBilling_url(paymeUrl);
+        }
 
         return ResponseEntity.ok(billingUrl);
+    }
+
+    @PostMapping("/payme/prepare")
+    public ResponseEntity<?> paymePrepare(Map<String, String> map) {
+
+        System.out.println("Incoming Payme Request");
+
+        return ResponseEntity.ok("");
     }
 
     @Getter
