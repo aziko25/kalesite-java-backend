@@ -218,16 +218,18 @@ public class OrdersController {
         }
         else if (order.getPaymentType() == 1) {
 
-            String baseUrl = "https://checkout.paycom.uz";
+            String paymeUrl = "https://checkout.paycom.uz";
             String merchantId = "65e2f91cf4193eeca0afd4b0";
-            long amount = (long) (orderTotalSum * 100);
+            long amount = (long) (orderTotalSum * 100); // тиины
             String orderId = order.getId().toString();
             String returnUrl = "https://kale.mdholding.uz/profile/purchases-history";
 
-            String paymeUrl = String.format("%s/transfer?merchant=%s&amount=%d&account[order_id]=%s&return_url=%s",
-                    baseUrl, merchantId, amount, orderId, returnUrl);
+            String data = "m=" + merchantId + ";ac.order_id=" + orderId + ";a=" + amount + ";c=" + returnUrl;
+            String encodedData = Base64.getEncoder().encodeToString(data.getBytes());
 
-            billingUrl.setBilling_url(paymeUrl);
+            String url = paymeUrl + "/" + encodedData;
+
+            billingUrl.setBilling_url(url);
         }
 
         return ResponseEntity.ok(billingUrl);
