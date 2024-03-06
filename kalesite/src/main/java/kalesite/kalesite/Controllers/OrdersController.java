@@ -259,12 +259,18 @@ public class OrdersController {
 
                 Order_Orders order = order_ordersRepository.findByPaymeTransactionId((String) params.get("id"));
 
+                Long time = (Long) params.get("time");
+
+                Instant instant = Instant.ofEpochMilli(time);
+                ZonedDateTime zonedDateTime = instant.atZone(ZoneId.systemDefault());
+                LocalDateTime localDateTime = zonedDateTime.toLocalDateTime();
+
                 if (order == null) {
 
                     order = new Order_Orders();
 
                     order.setGuid(UUID.randomUUID());
-                    order.setCreatedAt(LocalDateTime.now());
+                    order.setCreatedAt(localDateTime);
                     order.setTotalAmount((Double) params.get("amount") * 100);
                     order.setInstallation(true);
                     order.setOrderedTime(LocalDateTime.now());
@@ -275,12 +281,11 @@ public class OrdersController {
                     order_ordersRepository.save(order);
                 }
 
-                Long createTime = (Long) params.get("time");
                 String transactionId = order.getId().toString();
                 int state = 1;
                 response = Map.of(
                         "result", Map.of(
-                                "create_time", createTime,
+                                "create_time", time,
                                 "transaction", transactionId,
                                 "state", state
                         )
