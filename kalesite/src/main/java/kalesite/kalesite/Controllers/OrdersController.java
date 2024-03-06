@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -267,8 +268,8 @@ public class OrdersController {
 
                 // You would typically look up the transaction details using the id provided
                 // For demonstration, the response is hardcoded
-                Long createTime = Long.valueOf(LocalDateTime.now().toString());
-                Long performTime = Long.valueOf(LocalDateTime.now().toString());
+                Long createTime = Instant.now().toEpochMilli();
+                Long performTime = Instant.now().toEpochMilli();
                 Long cancelTime = 0L;
                 String transactionId = "5123"; // Use the transaction id from the example
                 int state = 2; // Assuming the transaction is completed
