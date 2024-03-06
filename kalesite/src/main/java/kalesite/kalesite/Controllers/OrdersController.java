@@ -22,6 +22,8 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @RestController
@@ -159,7 +161,10 @@ public class OrdersController {
 
             Order_OrderProducts orderProducts = new Order_OrderProducts();
 
-            orderProducts.setGuid(UUID.randomUUID());
+            if (body.getPaymentType() == 2) {
+                orderProducts.setGuid(UUID.randomUUID());
+            }
+
             orderProducts.setCreatedAt(LocalDateTime.now());
             orderProducts.setQuantity(product.getQuantity());
             orderProducts.setOrderPrice(product.getOrderPrice() * product.getQuantity());
@@ -249,9 +254,15 @@ public class OrdersController {
             case "CheckPerformTransaction" -> response = Map.of("result", Map.of("allow", true));
 
             case "CreateTransaction" -> {
+
                 Map<String, Object> params = (Map<String, Object>) requestBody.get("params");
+
+                Order_Orders order = order_ordersRepository.findFirstByPaymentTypeAndGuidIsNull(1);
+                order.setGuid((UUID) params.get("id"));
+                order_ordersRepository.save(order);
+
                 Long createTime = (Long) params.get("time");
-                String transactionId = "5123"; // Assume this is determined dynamically in a real scenario
+                String transactionId = order.getId().toString();
                 int state = 1;
                 response = Map.of(
                         "result", Map.of(
@@ -263,14 +274,22 @@ public class OrdersController {
             }
 
             case "CheckTransaction" -> {
+
                 Map<String, Object> params = (Map<String, Object>) requestBody.get("params");
 
-                String id = (String) params.get("id");
+                Order_Orders order = order_ordersRepository.findByGuid((UUID) params.get("id"));
 
-                Long createTime = Instant.now().toEpochMilli();
-                Long performTime = Instant.now().toEpochMilli();
+                LocalDateTime localDateTime = order.getCreatedAt();
+
+                ZoneId zoneId = ZoneId.systemDefault();
+                ZonedDateTime zonedDateTime = localDateTime.atZone(zoneId);
+                Instant instant = zonedDateTime.toInstant();
+
+                Long createTime = instant.toEpochMilli();
+                Long performTime = instant.toEpochMilli();
+
                 Long cancelTime = 0L;
-                String transactionId = "5123";
+                String transactionId = order.getId().toString();
                 int state = 2;
 
                 response = Map.of(
@@ -278,7 +297,7 @@ public class OrdersController {
                                 "create_time", createTime,
                                 "perform_time", performTime,
                                 "cancel_time", cancelTime,
-                                "transaction", id,
+                                "transaction", transactionId,
                                 "state", state,
                                 "reason", Optional.empty()
                         )
