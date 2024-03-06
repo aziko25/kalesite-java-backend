@@ -266,10 +266,8 @@ public class OrdersController {
                 Map<String, Object> params = (Map<String, Object>) requestBody.get("params");
                 String id = (String) params.get("id");
 
-                // You would typically look up the transaction details using the id provided
-                // For demonstration, the response is hardcoded
-                //Long createTime = Instant.now().toEpochMilli();
-                //Long performTime = Instant.now().toEpochMilli();
+                Long createTime = Instant.now().toEpochMilli();
+                Long performTime = Instant.now().toEpochMilli();
                 Long cancelTime = 0L;
                 String transactionId = "5123"; // Use the transaction id from the example
                 int state = 2; // Assuming the transaction is completed
@@ -277,8 +275,8 @@ public class OrdersController {
 
                 response = Map.of(
                         "result", Map.of(
-                                "create_time", LocalDateTime.now(),
-                                "perform_time", LocalDateTime.now(),
+                                "create_time", createTime,
+                                "perform_time", performTime,
                                 "cancel_time", cancelTime,
                                 "transaction", transactionId,
                                 "state", state,
