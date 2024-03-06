@@ -235,12 +235,16 @@ public class OrdersController {
         return ResponseEntity.ok(billingUrl);
     }
 
-    @PostMapping("/payme/prepare")
-    public ResponseEntity<?> paymePrepare(Map<String, String> map) {
+    @PostMapping("/payme/checkPerformTransaction")
+    public ResponseEntity<?> paymePrepare(@RequestBody Map<String, Object> requestBody) {
 
         System.out.println("Incoming Payme Request");
 
-        return ResponseEntity.ok("");
+        // Prepare the response
+        Map<String, Object> response = Map.of("result", Map.of("allow", true));
+
+        // Return the response
+        return ResponseEntity.ok(response);
     }
 
     @Getter
