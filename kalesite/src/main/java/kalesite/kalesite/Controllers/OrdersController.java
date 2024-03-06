@@ -264,21 +264,21 @@ public class OrdersController {
 
             case "CheckTransaction" -> {
                 Map<String, Object> params = (Map<String, Object>) requestBody.get("params");
+
                 String id = (String) params.get("id");
 
                 Long createTime = Instant.now().toEpochMilli();
                 Long performTime = Instant.now().toEpochMilli();
                 Long cancelTime = 0L;
-                String transactionId = "5123"; // Use the transaction id from the example
-                int state = 2; // Assuming the transaction is completed
-                String reason = null; // Assuming there's no specific reason for transaction completion
+                String transactionId = "5123";
+                int state = 2;
 
                 response = Map.of(
                         "result", Map.of(
                                 "create_time", createTime,
                                 "perform_time", performTime,
                                 "cancel_time", cancelTime,
-                                "transaction", transactionId,
+                                "transaction", id,
                                 "state", state,
                                 "reason", Optional.empty()
                         )
