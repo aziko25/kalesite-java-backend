@@ -280,7 +280,7 @@ public class OrdersController {
                                 "cancel_time", cancelTime,
                                 "transaction", transactionId,
                                 "state", state,
-                                "reason", ""
+                                "reason", Optional.empty()
                         )
                 );
             }
