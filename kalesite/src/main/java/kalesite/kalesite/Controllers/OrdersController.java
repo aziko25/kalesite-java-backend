@@ -257,25 +257,26 @@ public class OrdersController {
 
                 Map<String, Object> params = (Map<String, Object>) requestBody.get("params");
 
-                Order_Orders order = new Order_Orders();
-                order.setGuid(UUID.randomUUID());
-                order.setCreatedAt(LocalDateTime.now());
-                order.setTotalAmount((Double) params.get("amount") * 100);
-                order.setInstallation(true);
-                order.setOrderedTime(LocalDateTime.now());
-                order.setStatus(1);
-                order.setPaymentStatus("waiting");
-                order.setPaymentType(1);
-                order.setPaymeTransactionId((String) params.get("id"));
-                order_ordersRepository.save(order);
+                Order_Orders order = order_ordersRepository.findByPaymeTransactionId((String) params.get("id"));
 
-                //Order_Orders orderFound = order_ordersRepository.findFirstByPaymentTypeAndPaymeTransactionIdIsNull(1);
-                Order_Orders orderFound = order_ordersRepository.findByPaymeTransactionId((String) params.get("id"));
+                if (order == null) {
 
-                order_ordersRepository.save(orderFound);
+                    order = new Order_Orders();
+
+                    order.setGuid(UUID.randomUUID());
+                    order.setCreatedAt(LocalDateTime.now());
+                    order.setTotalAmount((Double) params.get("amount") * 100);
+                    order.setInstallation(true);
+                    order.setOrderedTime(LocalDateTime.now());
+                    order.setStatus(1);
+                    order.setPaymentStatus("waiting");
+                    order.setPaymentType(1);
+                    order.setPaymeTransactionId((String) params.get("id"));
+                    order_ordersRepository.save(order);
+                }
 
                 Long createTime = (Long) params.get("time");
-                String transactionId = orderFound.getId().toString();
+                String transactionId = order.getId().toString();
                 int state = 1;
                 response = Map.of(
                         "result", Map.of(
