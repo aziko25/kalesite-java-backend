@@ -310,13 +310,14 @@ public class OrdersController {
                 Long cancelTime = 0L;
                 String transactionId = order.getId().toString();
                 int state = 2;
+                String tId = (String) params.get("id");
 
                 response = Map.of(
                         "result", Map.of(
                                 "create_time", createTime,
                                 "perform_time", performTime,
                                 "cancel_time", cancelTime,
-                                "transaction", transactionId,
+                                "transaction", tId,
                                 "state", state,
                                 "reason", Optional.empty()
                         )
