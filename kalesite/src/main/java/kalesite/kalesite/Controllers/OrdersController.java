@@ -266,11 +266,12 @@ public class OrdersController {
                 order.setStatus(1);
                 order.setPaymentStatus("waiting");
                 order.setPaymentType(1);
+                order.setPaymeTransactionId((String) params.get("id"));
                 order_ordersRepository.save(order);
 
-                Order_Orders orderFound = order_ordersRepository.findFirstByPaymentTypeAndPaymeTransactionIdIsNull(1);
+                //Order_Orders orderFound = order_ordersRepository.findFirstByPaymentTypeAndPaymeTransactionIdIsNull(1);
+                Order_Orders orderFound = order_ordersRepository.findByPaymeTransactionId((String) params.get("id"));
 
-                orderFound.setPaymeTransactionId((String) params.get("id"));
                 order_ordersRepository.save(orderFound);
 
                 Long createTime = (Long) params.get("time");
