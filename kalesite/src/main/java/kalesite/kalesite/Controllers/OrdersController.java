@@ -258,7 +258,10 @@ public class OrdersController {
                 Map<String, Object> params = (Map<String, Object>) requestBody.get("params");
 
                 Order_Orders order = order_ordersRepository.findFirstByPaymentTypeAndGuidIsNull(1);
-                order.setGuid((UUID) params.get("id"));
+
+                String idStr = (String) params.get("id");
+                UUID idUUID = UUID.fromString(idStr);
+                order.setGuid(idUUID);
                 order_ordersRepository.save(order);
 
                 Long createTime = (Long) params.get("time");
@@ -277,7 +280,9 @@ public class OrdersController {
 
                 Map<String, Object> params = (Map<String, Object>) requestBody.get("params");
 
-                Order_Orders order = order_ordersRepository.findByGuid((UUID) params.get("id"));
+                String idStr = (String) params.get("id");
+                UUID idUUID = UUID.fromString(idStr);
+                Order_Orders order = order_ordersRepository.findByGuid(idUUID);
 
                 LocalDateTime localDateTime = order.getCreatedAt();
 
