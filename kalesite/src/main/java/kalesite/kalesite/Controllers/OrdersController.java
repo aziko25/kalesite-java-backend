@@ -299,25 +299,29 @@ public class OrdersController {
                 Order_Orders order = order_ordersRepository.findByPaymeTransactionId((String) params.get("id"));
 
                 LocalDateTime localDateTime = order.getCreatedAt();
+                LocalDateTime now = LocalDateTime.now();
 
                 ZoneId zoneId = ZoneId.systemDefault();
+
                 ZonedDateTime zonedDateTime = localDateTime.atZone(zoneId);
+                ZonedDateTime zonedDateTime1 = now.atZone(zoneId);
+
                 Instant instant = zonedDateTime.toInstant();
+                Instant instant1 = zonedDateTime1.toInstant();
 
                 Long createTime = instant.toEpochMilli();
-                Long performTime = instant.toEpochMilli();
+                Long performTime = instant1.toEpochMilli();
 
                 Long cancelTime = 0L;
                 String transactionId = order.getId().toString();
                 int state = 2;
-                String tId = (String) params.get("id");
 
                 response = Map.of(
                         "result", Map.of(
                                 "create_time", createTime,
                                 "perform_time", performTime,
                                 "cancel_time", cancelTime,
-                                "transaction", tId,
+                                "transaction", transactionId,
                                 "state", state,
                                 "reason", Optional.empty()
                         )
