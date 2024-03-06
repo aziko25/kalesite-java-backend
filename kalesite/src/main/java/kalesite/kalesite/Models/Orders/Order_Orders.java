@@ -25,6 +25,9 @@ public class Order_Orders {
 
     private UUID guid;
 
+    @Column(name = "\"payme_transaction_id\"")
+    private String paymeTransactionId;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
