@@ -235,17 +235,64 @@ public class OrdersController {
         return ResponseEntity.ok(billingUrl);
     }
 
+    @SuppressWarnings("unchecked")
     @PostMapping("/payme/checkPerformTransaction")
     public ResponseEntity<?> paymePrepare(@RequestBody Map<String, Object> requestBody) {
 
         System.out.println("Incoming Payme Request");
 
-        // Prepare the response
-        Map<String, Object> response = Map.of("result", Map.of("allow", true));
+        String method = (String) requestBody.get("method");
+        Map<String, Object> response;
+        switch (method) {
+
+            case "CheckPerformTransaction" -> response = Map.of("result", Map.of("allow", true));
+
+            case "CreateTransaction" -> {
+                Map<String, Object> params = (Map<String, Object>) requestBody.get("params");
+                Long createTime = (Long) params.get("time");
+                String transactionId = "5123"; // Assume this is determined dynamically in a real scenario
+                int state = 1;
+                response = Map.of(
+                        "result", Map.of(
+                                "create_time", createTime,
+                                "transaction", transactionId,
+                                "state", state
+                        )
+                );
+            }
+
+            case "CheckTransaction" -> {
+                Map<String, Object> params = (Map<String, Object>) requestBody.get("params");
+                String id = (String) params.get("id");
+
+                // You would typically look up the transaction details using the id provided
+                // For demonstration, the response is hardcoded
+                Long createTime = Long.valueOf(LocalDateTime.now().toString());
+                Long performTime = Long.valueOf(LocalDateTime.now().toString());
+                Long cancelTime = 0L;
+                String transactionId = "5123"; // Use the transaction id from the example
+                int state = 2; // Assuming the transaction is completed
+                String reason = null; // Assuming there's no specific reason for transaction completion
+
+                response = Map.of(
+                        "result", Map.of(
+                                "create_time", createTime,
+                                "perform_time", performTime,
+                                "cancel_time", cancelTime,
+                                "transaction", transactionId,
+                                "state", state,
+                                "reason", reason
+                        )
+                );
+            }
+
+            default -> response = Map.of("error", "Unsupported method");
+        }
 
         // Return the response
         return ResponseEntity.ok(response);
     }
+
 
     @Getter
     @Setter
