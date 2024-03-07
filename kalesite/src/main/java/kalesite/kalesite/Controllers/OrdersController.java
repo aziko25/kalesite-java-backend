@@ -319,7 +319,7 @@ public class OrdersController {
                 response = Map.of(
                         "result", Map.of(
                                 "create_time", createTime,
-                               // "perform_time", performTime,
+                                "perform_time", Optional.empty(),
                                 "cancel_time", cancelTime,
                                 "transaction", transactionId,
                                 "state", state,
