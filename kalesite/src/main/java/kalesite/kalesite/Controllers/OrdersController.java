@@ -28,7 +28,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -52,17 +51,13 @@ public class OrdersController {
 
         int pageNumber = offset / limit;
 
-        PageRequest pageRequest = PageRequest.of(pageNumber, limit);
+        PageRequest pageRequest = PageRequest.of(pageNumber, limit, Sort.by("code").descending());
 
         Page<Order_Orders> orders = order_ordersRepository.findAll(pageRequest);
 
-        List<Order_Orders> ordersList = orders.stream()
-                .sorted(Comparator.comparing(Order_Orders::getOrderedTime, Comparator.nullsLast(Comparator.reverseOrder())))
-                .toList();
-
         List<Map<String, Object>> ordersResponseList = new ArrayList<>();
 
-        for (Order_Orders order : ordersList) {
+        for (Order_Orders order : orders) {
 
             Map<String, Object> orderMap = new HashMap<>();
 
