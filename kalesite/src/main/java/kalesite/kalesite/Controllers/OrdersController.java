@@ -77,7 +77,7 @@ public class OrdersController {
 
                 if (product != null) {
 
-                    productMap.put("photo_small", product.getPhoto());
+                    productMap.put("photo_small", "https://api.kale.mdholding.uz/media/" + product.getPhoto());
                     productMap.put("title", product.getTitle());
                     productMap.put("code", product.getCode());
                     productMap.put("discount", orderProductDetails.getDiscount());
