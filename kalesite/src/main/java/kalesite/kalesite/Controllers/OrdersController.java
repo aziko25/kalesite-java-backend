@@ -57,7 +57,7 @@ public class OrdersController {
         Page<Order_Orders> orders = order_ordersRepository.findAll(pageRequest);
 
         List<Order_Orders> ordersList = orders.stream()
-                .sorted(Comparator.comparing(Order_Orders::getOrderedTime, Comparator.nullsLast(Comparator.naturalOrder())))
+                .sorted(Comparator.comparing(Order_Orders::getOrderedTime, Comparator.nullsLast(Comparator.reverseOrder())))
                 .toList();
 
         List<Map<String, Object>> ordersResponseList = new ArrayList<>();
@@ -67,7 +67,10 @@ public class OrdersController {
             Map<String, Object> orderMap = new HashMap<>();
 
             orderMap.put("code", order.getCode());
-            orderMap.put("orderer", order.getUserId().getPhone() + " " + order.getUserId().getName());
+
+            if (order.getUserId() != null) {
+                orderMap.put("orderer", order.getUserId().getPhone() + " " + order.getUserId().getName());
+            }
 
             if (order.getAddressId() != null) {
                 orderMap.put("address", order.getAddressId().getRegion() + " " + order.getAddressId().getDistrict() + " " + order.getAddressId().getStreet());
