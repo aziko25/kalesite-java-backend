@@ -15,6 +15,9 @@ import kalesite.kalesite.Repositories.User_UsersRepository;
 import kalesite.kalesite.Telegram.MainTelegramBot;
 import lombok.*;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -42,6 +45,48 @@ public class OrdersController {
     @Value("${chat_id}")
     private String chatId;
 
+    @GetMapping("/order-list")
+    public ResponseEntity<?> orderList(@RequestParam(defaultValue = "0") int offset,
+                                       @RequestParam(defaultValue = "10") int limit) {
+
+        int pageNumber = offset / limit;
+
+        PageRequest pageRequest = PageRequest.of(pageNumber, limit);
+
+        Page<Order_Orders> orders = order_ordersRepository.findAll(pageRequest);
+
+        List<Map<String, Object>> ordersResponseList = new ArrayList<>();
+
+        for (Order_Orders order : orders) {
+
+            Map<String, Object> orderMap = new HashMap<>();
+
+            orderMap.put("code", order.getCode());
+            orderMap.put("orderer", order.getUserId().getPhone() + " " + order.getUserId().getName());
+
+            if (order.getAddressId() != null) {
+                orderMap.put("address", order.getAddressId().getRegion() + " " + order.getAddressId().getDistrict() + " " + order.getAddressId().getStreet());
+            }
+
+            orderMap.put("totalAmount", order.getTotalAmount());
+            orderMap.put("status", order.getStatus());
+            orderMap.put("paymentStatus", order.getPaymentStatus());
+            orderMap.put("paymentType", order.getPaymentType());
+            orderMap.put("deliveredTime", order.getDeliveredTime());
+            orderMap.put("orderedTime", order.getOrderedTime());
+            orderMap.put("guid", order.getGuid());
+
+            ordersResponseList.add(orderMap);
+        }
+
+        Map<String, Object> response = new HashMap<>();
+
+        response.put("results", ordersResponseList);
+        response.put("count", orders.getTotalElements());
+
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/order-history")
     public ResponseEntity<?> orderHistory(@RequestParam String name) {
 
@@ -50,7 +95,7 @@ public class OrdersController {
             return ResponseEntity.notFound().build();
         }
 
-        List<Order_Orders> orders = order_ordersRepository.findAllByUserId(user);
+        List<Order_Orders> orders = order_ordersRepository.findAllByUserId(user, Sort.by("code").ascending());
 
         List<Map<String, Object>> ordersResponseList = new ArrayList<>();
 
@@ -335,6 +380,10 @@ public class OrdersController {
                     order.setPaymentStatus("waiting");
                     order.setPaymentType(1);
                     order.setPaymeTransactionId((String) params.get("id"));
+                    order_ordersRepository.save(order);
+
+                    long sum = 1000000 + order.getId();
+                    order.setCode("#" + sum);
                     order_ordersRepository.save(order);
                 }
 
