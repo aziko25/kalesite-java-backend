@@ -163,7 +163,7 @@ public class OrdersController {
             response.put("error_note", "Success");
 
             order.setStatus(0);
-            order.setPaymentStatus("Оплачено");
+            order.setPaymentStatus("confirmed");
             order_ordersRepository.save(order);
 
             String comment = null;
