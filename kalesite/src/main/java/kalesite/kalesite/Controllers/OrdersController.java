@@ -50,17 +50,18 @@ public class OrdersController {
                                        @RequestParam(defaultValue = "10") int limit) {
 
         int pageNumber = offset / limit;
-
         PageRequest pageRequest = PageRequest.of(pageNumber, limit, Sort.by("orderedTime").descending());
-
         Page<Order_Orders> orders = order_ordersRepository.findAll(pageRequest);
 
         List<Map<String, Object>> ordersResponseList = new ArrayList<>();
 
         for (Order_Orders order : orders) {
 
-            Map<String, Object> orderMap = new HashMap<>();
+            Map<String, Object> orderMap = new LinkedHashMap<>();
 
+            orderMap.put("id", order.getId());
+            orderMap.put("guid", order.getGuid());
+            orderMap.put("user", order.getUserId() != null ? order.getUserId().getId() : null);
             orderMap.put("code", order.getCode());
 
             if (order.getUserId() != null) {
@@ -71,24 +72,58 @@ public class OrdersController {
                 orderMap.put("address", order.getAddressId().getRegion() + " " + order.getAddressId().getDistrict() + " " + order.getAddressId().getStreet());
             }
 
+            List<Map<String, Object>> productsList = new ArrayList<>();
+
+            List<Order_Order_Products> orderProducts = order_order_productsRepository.findAllByOrderId(order);
+
+            for (Order_Order_Products orderProduct : orderProducts) {
+
+                Map<String, Object> productDetailMap = new LinkedHashMap<>();
+
+                Order_OrderProducts orderProductDetails = orderProduct.getOrderProductId();
+                Product_Products product = orderProductDetails.getProductId();
+
+                if (product != null) {
+
+                    Map<String, Object> productMap = new LinkedHashMap<>();
+
+                    productMap.put("id", product.getId());
+                    productMap.put("guid", product.getGuid());
+                    productMap.put("code", product.getCode());
+                    productMap.put("title", product.getTitle());
+                    productMap.put("unit", product.getUnit());
+                    productMap.put("brand", product.getBrand());
+                    productMap.put("size", product.getSize());
+                    productMap.put("photo_small", "https://api.kale.mdholding.uz/media/" + product.getPhoto());
+
+                    productDetailMap.put("product", productMap);
+                    productDetailMap.put("quantity", orderProductDetails.getQuantity());
+                    productDetailMap.put("orderPrice", orderProductDetails.getOrderPrice());
+                    productDetailMap.put("discount", orderProductDetails.getDiscount());
+                }
+
+                productsList.add(productDetailMap);
+            }
+
+            orderMap.put("products", productsList);
             orderMap.put("totalAmount", order.getTotalAmount());
-            orderMap.put("status", order.getStatus());
+            orderMap.put("orderedTime", order.getOrderedTime());
+            orderMap.put("deliveredTime", order.getDeliveredTime());
             orderMap.put("paymentStatus", order.getPaymentStatus());
             orderMap.put("paymentType", order.getPaymentType());
-            orderMap.put("deliveredTime", order.getDeliveredTime());
-            orderMap.put("orderedTime", order.getOrderedTime());
-            orderMap.put("guid", order.getGuid());
+            orderMap.put("status", order.getStatus());
 
             ordersResponseList.add(orderMap);
         }
 
-        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> response = new LinkedHashMap<>();
 
         response.put("results", ordersResponseList);
         response.put("count", orders.getTotalElements());
 
         return ResponseEntity.ok(response);
     }
+
 
     @GetMapping("/order-history")
     public ResponseEntity<?> orderHistory(@RequestParam String name) {
