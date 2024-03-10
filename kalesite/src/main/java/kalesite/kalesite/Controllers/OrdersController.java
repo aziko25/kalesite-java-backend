@@ -42,6 +42,62 @@ public class OrdersController {
     @Value("${chat_id}")
     private String chatId;
 
+    @GetMapping("/order-history")
+    public ResponseEntity<?> orderHistory(@RequestParam String name) {
+
+        User_Users user = user_usersRepository.findByName(name);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        List<Order_Orders> orders = order_ordersRepository.findAllByUserId(user);
+
+        List<Map<String, Object>> ordersResponseList = new ArrayList<>();
+
+        for (Order_Orders order : orders) {
+
+            Map<String, Object> orderMap = new HashMap<>();
+
+            orderMap.put("code", order.getCode());
+            orderMap.put("paymentStatus", order.getPaymentStatus());
+            orderMap.put("orderedTime", order.getOrderedTime());
+            orderMap.put("totalAmount", order.getTotalAmount());
+
+            List<Order_Order_Products> orderProducts = order_order_productsRepository.findAllByOrderId(order);
+
+            List<Map<String, Object>> productsList = new ArrayList<>();
+
+            for (Order_Order_Products orderProduct : orderProducts) {
+
+                Order_OrderProducts orderProductDetails = orderProduct.getOrderProductId();
+
+                Product_Products product = orderProductDetails.getProductId();
+
+                Map<String, Object> productMap = new HashMap<>();
+
+                if (product != null) {
+
+                    productMap.put("photo_small", product.getPhoto());
+                    productMap.put("title", product.getTitle());
+                    productMap.put("code", product.getCode());
+                    productMap.put("discount", orderProductDetails.getDiscount());
+                }
+
+                Map<String, Object> productDetailsMap = new HashMap<>();
+
+                productDetailsMap.put("product", productMap);
+                productDetailsMap.put("orderPrice", orderProductDetails.getOrderPrice());
+
+                productsList.add(productDetailsMap);
+            }
+
+            orderMap.put("products", productsList);
+            ordersResponseList.add(orderMap);
+        }
+
+        return ResponseEntity.ok(ordersResponseList);
+    }
+
     @PostMapping("/prepare-order")
     public ResponseEntity<?> prepareOrder(@RequestParam Map<String, String> body) {
 
