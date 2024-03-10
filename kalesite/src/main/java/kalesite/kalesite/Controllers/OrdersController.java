@@ -124,7 +124,6 @@ public class OrdersController {
         return ResponseEntity.ok(response);
     }
 
-
     @GetMapping("/order-history")
     public ResponseEntity<?> orderHistory(@RequestParam String name) {
 
@@ -133,7 +132,7 @@ public class OrdersController {
             return ResponseEntity.notFound().build();
         }
 
-        List<Order_Orders> orders = order_ordersRepository.findAllByUserId(user, Sort.by("code").ascending());
+        List<Order_Orders> orders = order_ordersRepository.findAllByUserId(user, Sort.by("orderedTime").descending());
 
         List<Map<String, Object>> ordersResponseList = new ArrayList<>();
 
@@ -198,7 +197,6 @@ public class OrdersController {
 
         return ResponseEntity.ok(response);
     }
-
 
     @PostMapping("/complete-order")
     public ResponseEntity<?> completeOrder(@RequestParam Map<String, String> body) {

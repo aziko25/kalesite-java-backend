@@ -21,6 +21,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -119,11 +121,32 @@ public class ProductsServices {
             long endTime = System.currentTimeMillis();
             long timeSpent = (endTime - startTime) / 1000;
 
-            SendMessage message = new SendMessage();
+            if (lastMessageIdMap.containsKey(chatId)) {
 
+                Integer lastMessageId = lastMessageIdMap.get(chatId);
+
+                DeleteMessage deleteMessage = new DeleteMessage();
+                deleteMessage.setChatId(chatId);
+                deleteMessage.setMessageId(lastMessageId);
+
+                try {
+                    mainTelegramBot.execute(deleteMessage);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            SendMessage message = new SendMessage();
             message.setChatId(chatId);
             message.setText("Operation Products Update completed in " + timeSpent + " seconds!");
-            mainTelegramBot.sendMessage(message);
+
+            try {
+                Integer messageId = mainTelegramBot.execute(message).getMessageId();
+                lastMessageIdMap.put(chatId, messageId);
+            }
+            catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
 
             System.out.println("Operation completed in " + timeSpent + " seconds!");
         }
@@ -131,6 +154,10 @@ public class ProductsServices {
             e.printStackTrace();
         }
     }
+
+    Map<String, Integer> lastMessageIdMap = new HashMap<>();
+
+    private final String chatId = "-1002048013161";
 
     private void batchInsertNewProducts(List<Map<String, Object>> newProducts) {
 
@@ -366,7 +393,4 @@ public class ProductsServices {
 
         return base64Image;
     }
-
-    @Value("${chat_id}")
-    private String chatId;
 }
