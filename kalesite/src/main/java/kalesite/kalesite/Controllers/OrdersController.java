@@ -51,7 +51,7 @@ public class OrdersController {
 
         int pageNumber = offset / limit;
 
-        PageRequest pageRequest = PageRequest.of(pageNumber, limit, Sort.by("code").descending());
+        PageRequest pageRequest = PageRequest.of(pageNumber, limit, Sort.by("orderedTime").descending());
 
         Page<Order_Orders> orders = order_ordersRepository.findAll(pageRequest);
 
