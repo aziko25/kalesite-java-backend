@@ -299,7 +299,7 @@ public class OrdersController {
 
             Order_OrderProducts orderProducts = new Order_OrderProducts();
 
-            if (body.getPaymentType() == 2) {
+            if (body.getPaymentType() == 2 || body.getPaymentType() == 1) {
                 orderProducts.setGuid(UUID.randomUUID());
             }
 
