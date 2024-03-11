@@ -72,6 +72,8 @@ public class OrdersController {
                 orderMap.put("address", order.getAddressId().getRegion() + " " + order.getAddressId().getDistrict() + " " + order.getAddressId().getStreet());
             }
 
+            orderMap.put("comment", order.getComment());
+
             List<Map<String, Object>> productsList = new ArrayList<>();
 
             List<Order_Order_Products> orderProducts = order_order_productsRepository.findAllByOrderId(order);
