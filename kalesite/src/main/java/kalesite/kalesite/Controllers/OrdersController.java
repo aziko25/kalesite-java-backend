@@ -252,7 +252,7 @@ public class OrdersController {
 
             String comment = null;
             if (order.getComment() != null) {
-                comment = "\n" + order.getComment();
+                comment = "\nКомментарий: " + order.getComment();
             }
 
             StringBuilder orderMessage = new StringBuilder("Новый Заказ:\n\n" + order.getCode() + " " +
@@ -365,10 +365,12 @@ public class OrdersController {
         else if (order.getPaymentType() == 3) {
 
             StringBuilder orderMessage = new StringBuilder("Новый Заказ:\n\n" + order.getCode() + " " +
-                    user.getPhone() + " " + user.getName() + "\nАдрес: " + address.getRegion() + " " + address.getDistrict() + " " + address.getStreet() + "\nОплата Наличными.");
+                    user.getPhone() + " " + user.getName() + "\nАдрес: " + order.getAddressId().getRegion() +
+                    " " + order.getAddressId().getDistrict() +
+                    " " + order.getAddressId().getStreet() + "\nОплата Наличными.");
 
             if (order.getComment() != null) {
-                orderMessage.append("\n").append(order.getComment());
+                orderMessage.append("\nКомментарий: ").append(order.getComment());
             }
 
             orderMessage.append("\n---------------------");
