@@ -361,6 +361,10 @@ public class OrdersController {
 
             billingUrl.setBilling_url("https://my.click.uz/services/pay?service_id=28420&merchant_id=11369&return_url=https://kale.mdholding.uz/profile/purchases-history&amount=" + orderTotalSum + "&transaction_param=" + order.getId());
         }
+        else if (order.getPaymentType() == 3) {
+
+            billingUrl.setBilling_url("https://kale.mdholding.uz/profile/purchases-history");
+        }
         /*else if (order.getPaymentType() == 1) {
 
             String paymeUrl = "https://checkout.paycom.uz";
