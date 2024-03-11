@@ -258,7 +258,10 @@ public class OrdersController {
             StringBuilder orderMessage = new StringBuilder("Новый Заказ:\n\n" + order.getCode() + " " +
                     order_order_productsList.get(0).getOrderId().getUserId().getPhone() + " "
                     + order_order_productsList.get(0).getOrderId().getUserId().getName()
-                    + "\nАдрес: " + order_order_productsList.get(0).getOrderId().getAddressId().getRegion() + " " + order_order_productsList.get(0).getOrderId().getAddressId().getDistrict() + " " + order_order_productsList.get(0).getOrderId().getAddressId().getStreet() + "\nОплата Click."
+                    + "\nАдрес: " + order_order_productsList.get(0).getOrderId().getAddressId().getRegion() +
+                    " " + order_order_productsList.get(0).getOrderId().getAddressId().getDistrict() +
+                    " " + order_order_productsList.get(0).getOrderId().getAddressId().getStreet() +
+                    "\nОплата Click."
                     + comment + "\n---------------------");
 
             for (Order_Order_Products order_order_products : order_order_productsList) {
