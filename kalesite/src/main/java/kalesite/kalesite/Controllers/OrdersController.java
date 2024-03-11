@@ -356,11 +356,11 @@ public class OrdersController {
 
         BillingUrl billingUrl = new BillingUrl();
 
-        if (order.getPaymentType() == 2) {
+        if (order.getPaymentType() == 2 || order.getPaymentType() == 1) {
 
             billingUrl.setBilling_url("https://my.click.uz/services/pay?service_id=28420&merchant_id=11369&return_url=https://kale.mdholding.uz/profile/purchases-history&amount=" + orderTotalSum + "&transaction_param=" + order.getId());
         }
-        else if (order.getPaymentType() == 1) {
+        /*else if (order.getPaymentType() == 1) {
 
             String paymeUrl = "https://checkout.paycom.uz";
             String merchantId = "65e2f91cf4193eeca0afd4b0";
@@ -374,7 +374,7 @@ public class OrdersController {
             String url = paymeUrl + "/" + encodedData;
 
             billingUrl.setBilling_url(url);
-        }
+        }*/
 
         return ResponseEntity.ok(billingUrl);
     }
@@ -383,10 +383,9 @@ public class OrdersController {
     @PostMapping("/payme/checkPerformTransaction")
     public ResponseEntity<?> paymePrepare(@RequestBody Map<String, Object> requestBody) {
 
-        System.out.println("Incoming Payme Request");
-
         String method = (String) requestBody.get("method");
         Map<String, Object> response;
+
         switch (method) {
 
             case "CheckPerformTransaction" -> response = Map.of("result", Map.of("allow", true));
@@ -441,18 +440,11 @@ public class OrdersController {
                 Order_Orders order = order_ordersRepository.findByPaymeTransactionId((String) params.get("id"));
 
                 LocalDateTime localDateTime = order.getCreatedAt();
-                LocalDateTime now = LocalDateTime.now();
-
                 ZoneId zoneId = ZoneId.systemDefault();
-
                 ZonedDateTime zonedDateTime = localDateTime.atZone(zoneId);
-                ZonedDateTime zonedDateTime1 = now.atZone(zoneId);
-
                 Instant instant = zonedDateTime.toInstant();
-                Instant instant1 = zonedDateTime1.toInstant();
 
                 Long createTime = instant.toEpochMilli();
-                Long performTime = instant1.toEpochMilli();
 
                 Long cancelTime = 0L;
                 String transactionId = order.getId().toString();
@@ -473,10 +465,8 @@ public class OrdersController {
             default -> response = Map.of("error", "Unsupported method");
         }
 
-        // Return the response
         return ResponseEntity.ok(response);
     }
-
 
     @Getter
     @Setter
