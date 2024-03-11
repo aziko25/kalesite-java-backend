@@ -7,6 +7,7 @@ import kalesite.kalesite.Models.Orders.Order_Order_Products;
 import kalesite.kalesite.Models.Orders.Order_Orders;
 import kalesite.kalesite.Models.Products.Product_Products;
 import kalesite.kalesite.Models.User_Users;
+import kalesite.kalesite.Repositories.Address_AddressesRepository;
 import kalesite.kalesite.Repositories.Orders.Order_OrderProductRepository;
 import kalesite.kalesite.Repositories.Orders.Order_Order_ProductsRepository;
 import kalesite.kalesite.Repositories.Orders.Order_OrdersRepository;
@@ -41,6 +42,7 @@ public class OrdersController {
     private final Order_OrdersRepository order_ordersRepository;
     private final User_UsersRepository user_usersRepository;
     private final MainTelegramBot telegramBot;
+    private final Address_AddressesRepository address_addressesRepository;
 
     @Value("${chat_id}")
     private String chatId;
@@ -334,8 +336,7 @@ public class OrdersController {
         order.setPaymentStatus("waiting");
         order.setPaymentType(body.getPaymentType());
 
-        Address_Addresses address = new Address_Addresses();
-        address.setId(body.getAddress());
+        Address_Addresses address = address_addressesRepository.findById(body.getAddress()).orElseThrow();
         order.setAddressId(address);
 
         User_Users user = user_usersRepository.findById(body.getUser()).orElseThrow();
