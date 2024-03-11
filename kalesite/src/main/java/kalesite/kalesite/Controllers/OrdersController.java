@@ -301,11 +301,7 @@ public class OrdersController {
 
             Order_OrderProducts orderProducts = new Order_OrderProducts();
 
-            /*if (body.getPaymentType() == 2 || body.getPaymentType() == 1) {
-                orderProducts.setGuid(UUID.randomUUID());
-            }*/
             orderProducts.setGuid(UUID.randomUUID());
-
             orderProducts.setCreatedAt(LocalDateTime.now());
             orderProducts.setQuantity(product.getQuantity());
             orderProducts.setOrderPrice(product.getOrderPrice() * product.getQuantity());
@@ -364,6 +360,31 @@ public class OrdersController {
             billingUrl.setBilling_url("https://my.click.uz/services/pay?service_id=28420&merchant_id=11369&return_url=https://kale.mdholding.uz/profile/purchases-history&amount=" + orderTotalSum + "&transaction_param=" + order.getId());
         }
         else if (order.getPaymentType() == 3) {
+
+            StringBuilder orderMessage = new StringBuilder("Новый Заказ:\n\n" + order.getCode() + " " +
+                    user.getPhone() + " " + user.getName() + "\nАдрес: " + address.getRegion() + " " + address.getDistrict() + " " + address.getStreet() + "\nОплата Наличными.");
+
+            if (order.getComment() != null) {
+                orderMessage.append("\n").append(order.getComment());
+            }
+
+            orderMessage.append("\n---------------------");
+
+            for (Order_OrderProducts orderProducts : order_orderProductsList) {
+
+                orderMessage.append("\nИмя Товара: ").append(orderProducts.getProductId().getTitle())
+                        .append("\nКод Товара: ").append(orderProducts.getProductId().getCode())
+                        .append("\nКоличество: ").append(orderProducts.getQuantity())
+                        .append("\nСумма: ").append(orderProducts.getOrderPrice())
+                        .append("\n--------------");
+            }
+
+            SendMessage message = new SendMessage();
+
+            message.setChatId(chatId);
+            message.setText(orderMessage.toString());
+
+            telegramBot.sendMessage(message);
 
             billingUrl.setBilling_url("https://kale.mdholding.uz/profile/purchases-history");
         }
