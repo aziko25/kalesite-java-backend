@@ -420,13 +420,30 @@ public class OrdersController {
         String method = (String) requestBody.get("method");
         Map<String, Object> response;
 
+        Map<String, Object> params = (Map<String, Object>) requestBody.get("params");
+        Map<String, Object> account = (Map<String, Object>) params.get("account");
+
         switch (method) {
 
-            case "CheckPerformTransaction" -> response = Map.of("result", Map.of("allow", true));
+            case "CheckPerformTransaction" -> {
+
+                System.out.println("Check Perform Transaction");
+
+                String orderedAccount = (String) account.get("KaleUz");
+
+                Order_Orders order = order_ordersRepository.findTopByOrdererAccountPaymeOrderByCreatedAtDesc(orderedAccount);
+
+                if (order == null) {
+
+                    response = Map.of("result", Map.of("allow", -31050));
+                }
+                else {
+
+                    response = Map.of("result", Map.of("allow", true));
+                }
+            }
 
             case "CreateTransaction" -> {
-
-                Map<String, Object> params = (Map<String, Object>) requestBody.get("params");
 
                 Order_Orders order = order_ordersRepository.findByPaymeTransactionId((String) params.get("id"));
 
@@ -449,6 +466,7 @@ public class OrdersController {
                     order.setPaymentStatus("waiting");
                     order.setPaymentType(1);
                     order.setPaymeTransactionId((String) params.get("id"));
+                    order.setOrdererAccountPayme((String) account.get("KaleUz"));
                     order_ordersRepository.save(order);
 
                     long sum = 1000000 + order.getId();
@@ -468,8 +486,6 @@ public class OrdersController {
             }
 
             case "CheckTransaction" -> {
-
-                Map<String, Object> params = (Map<String, Object>) requestBody.get("params");
 
                 Order_Orders order = order_ordersRepository.findByPaymeTransactionId((String) params.get("id"));
 

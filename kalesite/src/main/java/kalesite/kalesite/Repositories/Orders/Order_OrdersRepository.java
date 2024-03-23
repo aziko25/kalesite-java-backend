@@ -20,6 +20,8 @@ public interface Order_OrdersRepository extends JpaRepository<Order_Orders, Long
 
     Order_Orders findByPaymeTransactionId(String id);
 
+    Order_Orders findTopByOrdererAccountPaymeOrderByCreatedAtDesc(String ordererAccountPayme);
+
     List<Order_Orders> findAllByUserId(User_Users user, Sort sort);
 
     Page<Order_Orders> findAll(Pageable pageable);

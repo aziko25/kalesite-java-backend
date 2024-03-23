@@ -57,6 +57,9 @@ public class Order_Orders {
     @JoinColumn(name = "user_id")
     private User_Users userId;
 
+    @Column(name = "orderer_account_payme")
+    private String ordererAccountPayme;
+
     @ManyToOne
     @JoinColumn(name = "address_id")
     private Address_Addresses addressId;
