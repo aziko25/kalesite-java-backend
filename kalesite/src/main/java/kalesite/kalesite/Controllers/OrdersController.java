@@ -44,7 +44,7 @@ public class OrdersController {
     private final MainTelegramBot telegramBot;
     private final Address_AddressesRepository address_addressesRepository;
 
-    @Value("${chat_id}")
+    @Value("${orders_chat_id}")
     private String chatId;
 
     @GetMapping("/order-list")
@@ -445,7 +445,8 @@ public class OrdersController {
 
             case "CreateTransaction" -> {
 
-                Order_Orders order = order_ordersRepository.findByPaymeTransactionId((String) params.get("id"));
+                String orderedAccount = (String) account.get("KaleUz");
+                Order_Orders order = order_ordersRepository.findTopByOrdererAccountPaymeOrderByCreatedAtDesc(orderedAccount);
 
                 Long time = (Long) params.get("time");
 

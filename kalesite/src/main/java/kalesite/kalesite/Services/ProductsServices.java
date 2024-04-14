@@ -51,7 +51,7 @@ public class ProductsServices {
 
     @Transactional
     @SuppressWarnings("unchecked")
-    @Scheduled(fixedDelay = 180000, initialDelay = 1000)
+    //@Scheduled(fixedDelay = 180000, initialDelay = 1000)
     public void insertFetchedProductsJdbcTemplateOptimized() {
 
         long startTime = System.currentTimeMillis();
@@ -157,7 +157,8 @@ public class ProductsServices {
 
     Map<String, Integer> lastMessageIdMap = new HashMap<>();
 
-    private final String chatId = "-1002048013161";
+    @Value("${1c_tg_chat_id}")
+    private String chatId;
 
     private void batchInsertNewProducts(List<Map<String, Object>> newProducts) {
 
