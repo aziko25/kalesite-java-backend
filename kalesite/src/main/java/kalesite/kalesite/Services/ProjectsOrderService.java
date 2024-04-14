@@ -12,7 +12,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 @RequiredArgsConstructor
 public class ProjectsOrderService {
 
-    @Value("${1c_tg_chat_id}")
+    @Value("${orders_chat_id}")
     private String chatId;
 
     private final MainTelegramBot mainTelegramBot;
