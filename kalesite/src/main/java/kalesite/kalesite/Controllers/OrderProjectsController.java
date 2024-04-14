@@ -15,7 +15,7 @@ public class OrderProjectsController {
 
     @PostMapping("/order")
     public ResponseEntity<?> orderProject(@RequestParam String fullName, @RequestParam String phone,
-                                          @RequestParam String comment) {
+                                          @RequestParam(required = false) String comment) {
 
         return ResponseEntity.ok(projectsOrderService.saveProject(fullName, phone, comment));
     }
