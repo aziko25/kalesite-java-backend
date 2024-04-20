@@ -1,10 +1,5 @@
 package kalesite.kalesite.Models.Payme.Entities;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 public enum OrderCancelReason {
 
     RECEIVER_NOT_FOUND(1),
@@ -22,5 +17,18 @@ public enum OrderCancelReason {
 
     public int getCode() {
         return this.code;
+    }
+
+    public static OrderCancelReason fromCode(int code) {
+
+        for (OrderCancelReason reason : OrderCancelReason.values()) {
+
+            if (reason.getCode() == code) {
+
+                return reason;
+            }
+        }
+
+        throw new IllegalArgumentException("Unknown code for OrderCancelReason: " + code);
     }
 }
