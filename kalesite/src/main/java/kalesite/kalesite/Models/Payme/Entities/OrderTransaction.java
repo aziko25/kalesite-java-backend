@@ -27,7 +27,7 @@ public class OrderTransaction {
     private Date paycomTime;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createTime;
+    private Long createTime;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date performTime;
@@ -43,4 +43,8 @@ public class OrderTransaction {
 
     @OneToOne
     private CustomerOrder order;
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime.getTime();
+    }
 }

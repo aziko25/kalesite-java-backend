@@ -47,6 +47,7 @@ public class PaymeOrdersController {
                 case "CreateTransaction":
 
                     id = params.get("id").asText();
+                    System.out.println(id);
                     long time = params.get("time").longValue();
                     amount = params.get("amount").intValue();
                     //account = objectMapper.treeToValue(params.get("account"), Account.class);

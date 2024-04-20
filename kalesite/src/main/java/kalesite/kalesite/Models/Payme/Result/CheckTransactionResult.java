@@ -13,7 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class CheckTransactionResult {
 
-    private Date createTime;
+    private Long createTime;
     private Date performTime;
     private Date cancelTime;
     private Long transaction;

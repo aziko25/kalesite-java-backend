@@ -8,12 +8,15 @@ import lombok.Setter;
 import java.util.Date;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateTransactionResult {
 
-    private Date createTime;
+    private long createTime;
     private Long transaction;
     private Integer state;
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime.getTime();
+    }
 }

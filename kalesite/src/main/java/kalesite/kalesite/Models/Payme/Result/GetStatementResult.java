@@ -18,7 +18,7 @@ public class GetStatementResult {
     private Date time;
     private Integer amount;
     private Account account;
-    private Date createTime;
+    private Long createTime;
     private Date performTime;
     private Date cancelTime;
     private Long transaction;

@@ -26,20 +26,25 @@ public class MerchantService implements IMerchantService {
     @Override
     public Map<String, CheckPerformTransactionResult> checkPerformTransaction(int amount, String id) throws WrongAmountException, OrderNotExistsException {
 
-        System.out.println("CPT here #1");
         if (id != null) {
 
             order = orderRepository.findByStringId(id).orElse(null);
 
             if (order == null) {
-                throw new OrderNotExistsException();
+                System.out.println("order not exist");
+                //throw new OrderNotExistsException();
+
+                CheckPerformTransactionResult checkPerformTransactionResult = new CheckPerformTransactionResult(true);
+                Map<String, CheckPerformTransactionResult> result = new HashMap<>();
+                result.put("result", checkPerformTransactionResult);
+
+                return result;
             }
 
             if (amount != order.getAmount()) {
                 throw new WrongAmountException();
             }
         }
-        System.out.println("CPT here #2");
 
         CheckPerformTransactionResult checkPerformTransactionResult = new CheckPerformTransactionResult(true);
         Map<String, CheckPerformTransactionResult> result = new HashMap<>();
@@ -51,11 +56,11 @@ public class MerchantService implements IMerchantService {
     @Override
     public Map<String, CreateTransactionResult> createTransaction(String id, Date time, int amount) throws OrderNotExistsException, WrongAmountException, UnableCompleteException {
 
-        System.out.println("CT here #1");
         OrderTransaction transaction = transactionRepository.findByPaycomId(id);
-        System.out.println("CT here #2");
 
         if (transaction == null) {
+
+            System.out.println("transaction not found");
 
             if (checkPerformTransaction(amount, id).get("result").isAllow()) {
 
@@ -77,6 +82,8 @@ public class MerchantService implements IMerchantService {
             }
         }
         else {
+
+            System.out.println("transaction found");
 
             if (transaction.getState() == TransactionState.STATE_IN_PROGRESS) {
 
