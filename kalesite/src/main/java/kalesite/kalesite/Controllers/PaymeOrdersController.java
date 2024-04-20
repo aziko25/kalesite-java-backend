@@ -31,7 +31,7 @@ public class PaymeOrdersController {
             if (account == null || account.isEmpty()) {
 
                 Map<String, String> map = new HashMap<>();
-                map.put("error", "-32504");
+                map.put("code", "-32504");
 
                 Map<String, Object> result = new HashMap<>();
 
