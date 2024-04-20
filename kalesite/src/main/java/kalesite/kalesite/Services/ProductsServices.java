@@ -51,7 +51,7 @@ public class ProductsServices {
 
     @Transactional
     @SuppressWarnings("unchecked")
-    @Scheduled(fixedDelay = 180000, initialDelay = 1000)
+    //@Scheduled(fixedDelay = 180000, initialDelay = 1000)
     public void insertFetchedProductsJdbcTemplateOptimized() {
 
         long startTime = System.currentTimeMillis();
