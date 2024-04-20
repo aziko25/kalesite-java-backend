@@ -14,8 +14,8 @@ import java.util.Date;
 public class CheckTransactionResult {
 
     private Long create_time;
-    private Date perform_time;
-    private Date cancel_time;
+    private Long perform_time;
+    private Long cancel_time;
     private String transaction;
     private Integer state;
     private Integer reason;

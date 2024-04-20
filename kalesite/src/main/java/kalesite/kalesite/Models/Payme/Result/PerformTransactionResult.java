@@ -14,6 +14,6 @@ import java.util.Date;
 public class PerformTransactionResult {
 
     private Long transaction;
-    private Date performTime;
+    private Long performTime;
     private Integer state;
 }

@@ -14,6 +14,6 @@ import java.util.Date;
 public class CancelTransactionResult {
 
     private Long transaction;
-    private Date cancelTime;
+    private Long cancelTime;
     private Integer state;
 }

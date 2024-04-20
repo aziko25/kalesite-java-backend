@@ -71,6 +71,8 @@ public class MerchantService implements IMerchantService {
                 newTransaction.setCreateTime(new Date());
                 newTransaction.setState(TransactionState.STATE_IN_PROGRESS);
                 newTransaction.setOrder(order);
+                newTransaction.setPerformTime(0L);
+                newTransaction.setCancelTime(0L);
 
                 transactionRepository.save(newTransaction);
 
@@ -112,9 +114,7 @@ public class MerchantService implements IMerchantService {
     @Override
     public Map<String, PerformTransactionResult> performTransaction(String id) throws TransactionNotFoundException, UnableCompleteException {
 
-        System.out.println("PT here #1");
         OrderTransaction transaction = transactionRepository.findByPaycomId(id);
-        System.out.println("PT here #2");
 
         if (transaction != null) {
 
@@ -130,7 +130,7 @@ public class MerchantService implements IMerchantService {
                 else {
 
                     transaction.setState(TransactionState.STATE_DONE);
-                    transaction.setPerformTime(new Date());
+                    transaction.setPerformTimes(new Date());
                     transactionRepository.save(transaction);
 
                     PerformTransactionResult performTransactionResult = new PerformTransactionResult(transaction.getId(), transaction.getPerformTime(), transaction.getState().getCode());
@@ -183,7 +183,7 @@ public class MerchantService implements IMerchantService {
                 transaction.setState(TransactionState.STATE_CANCELED);
             }
 
-            transaction.setCancelTime(new Date());
+            transaction.setCancelTimes(new Date());
             transaction.setReason(reason);
             transactionRepository.save(transaction);
 
