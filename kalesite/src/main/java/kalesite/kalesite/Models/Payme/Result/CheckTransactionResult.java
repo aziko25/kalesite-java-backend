@@ -13,10 +13,10 @@ import java.util.Date;
 @AllArgsConstructor
 public class CheckTransactionResult {
 
-    private Long createTime;
-    private Date performTime;
-    private Date cancelTime;
-    private Long transaction;
+    private Long create_time;
+    private Date perform_time;
+    private Date cancel_time;
+    private String transaction;
     private Integer state;
     private Integer reason;
 }

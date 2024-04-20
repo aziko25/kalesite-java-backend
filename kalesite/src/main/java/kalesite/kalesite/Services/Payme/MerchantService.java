@@ -211,7 +211,7 @@ public class MerchantService implements IMerchantService {
             CheckTransactionResult checkTransactionResult = new CheckTransactionResult(transaction.getCreateTime(),
                     transaction.getPerformTime(),
                     transaction.getCancelTime(),
-                    transaction.getId(),
+                    transaction.getPaycomId(),
                     transaction.getState().getCode(),
                     transaction.getReason() != null ? transaction.getReason().getCode() : null);
 
