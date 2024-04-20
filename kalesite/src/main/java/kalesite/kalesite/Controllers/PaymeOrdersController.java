@@ -35,7 +35,7 @@ public class PaymeOrdersController {
 
                 Map<String, Object> result = new HashMap<>();
 
-                result.put("result", map);
+                result.put("error", map);
 
                 return ResponseEntity.ok(result);
             }
