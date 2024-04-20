@@ -26,10 +26,10 @@ public class MerchantService implements IMerchantService {
     private CustomerOrder order;
 
     @Override
-    public CheckPerformTransactionResult checkPerformTransaction(int amount, Account account) throws WrongAmountException, OrderNotExistsException {
+    public CheckPerformTransactionResult checkPerformTransaction(int amount, String id) throws WrongAmountException, OrderNotExistsException {
 
         System.out.println("CPT here #1");
-        order = orderRepository.findById(account.getOrder()).orElse(null);
+        order = orderRepository.findById(id).orElse(null);
         System.out.println("CPT here #2");
 
         if (order == null) {
@@ -43,7 +43,7 @@ public class MerchantService implements IMerchantService {
     }
 
     @Override
-    public CreateTransactionResult createTransaction(String id, Date time, int amount, Account account) throws OrderNotExistsException, WrongAmountException, UnableCompleteException {
+    public CreateTransactionResult createTransaction(String id, Date time, int amount) throws OrderNotExistsException, WrongAmountException, UnableCompleteException {
 
         System.out.println("CT here #1");
         OrderTransaction transaction = transactionRepository.findByPaycomId(id);
@@ -51,7 +51,7 @@ public class MerchantService implements IMerchantService {
 
         if (transaction == null) {
 
-            if (checkPerformTransaction(amount, account).isAllow()) {
+            if (checkPerformTransaction(amount, id).isAllow()) {
 
                 OrderTransaction newTransaction = new OrderTransaction();
 

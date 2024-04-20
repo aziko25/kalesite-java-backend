@@ -10,9 +10,9 @@ import java.util.Date;
 
 public interface IMerchantService {
 
-    CheckPerformTransactionResult checkPerformTransaction(int amount, Account account) throws WrongAmountException, OrderNotExistsException;
+    CheckPerformTransactionResult checkPerformTransaction(int amount, String id) throws WrongAmountException, OrderNotExistsException;
 
-    CreateTransactionResult createTransaction(String id, Date time, int amount, Account account) throws OrderNotExistsException, WrongAmountException, UnableCompleteException;
+    CreateTransactionResult createTransaction(String id, Date time, int amount) throws OrderNotExistsException, WrongAmountException, UnableCompleteException;
 
     PerformTransactionResult performTransaction(String id) throws TransactionNotFoundException, UnableCompleteException;
 

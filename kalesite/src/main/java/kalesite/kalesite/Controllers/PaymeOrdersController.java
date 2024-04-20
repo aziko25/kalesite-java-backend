@@ -27,25 +27,27 @@ public class PaymeOrdersController {
 
             String method = jsonRequest.get("method").asText();
             JsonNode params = jsonRequest.get("params");
+            String id;
 
             switch (method) {
 
                 case "CheckPerformTransaction":
 
                     int amount = params.get("amount").intValue();
-                    Account account = objectMapper.treeToValue(params.get("account"), Account.class);
+                    id = params.get("id").asText();
+                    //Account account = objectMapper.treeToValue(params.get("account"), Account.class);
 
-                    return ResponseEntity.ok(merchantService.checkPerformTransaction(amount, account));
+                    return ResponseEntity.ok(merchantService.checkPerformTransaction(amount, id));
 
                 case "CreateTransaction":
 
-                    String id = params.get("id").asText();
+                    id = params.get("id").asText();
                     long time = params.get("time").longValue();
                     amount = params.get("amount").intValue();
-                    account = objectMapper.treeToValue(params.get("account"), Account.class);
+                    //account = objectMapper.treeToValue(params.get("account"), Account.class);
                     Date transactionDate = new Date(time);
 
-                    return ResponseEntity.ok(merchantService.createTransaction(id, transactionDate, amount, account));
+                    return ResponseEntity.ok(merchantService.createTransaction(id, transactionDate, amount));
 
                 case "CheckTransaction":
 
