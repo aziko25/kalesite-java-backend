@@ -32,6 +32,7 @@ public class PaymeOrdersController {
 
                 Map<String, String> map = new HashMap<>();
                 map.put("code", "-32504");
+                map.put("message", "HE-HE-HE-HA");
 
                 Map<String, Object> result = new HashMap<>();
 
