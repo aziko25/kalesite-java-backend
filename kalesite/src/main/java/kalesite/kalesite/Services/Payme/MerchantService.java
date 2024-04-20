@@ -60,8 +60,6 @@ public class MerchantService implements IMerchantService {
 
         if (transaction == null) {
 
-            System.out.println("transaction not found");
-
             if (checkPerformTransaction(amount, id).get("result").isAllow()) {
 
                 OrderTransaction newTransaction = new OrderTransaction();
@@ -162,9 +160,7 @@ public class MerchantService implements IMerchantService {
     @Override
     public Map<String, CancelTransactionResult> cancelTransaction(String id, OrderCancelReason reason) throws TransactionNotFoundException, UnableCancelTransactionException {
 
-        System.out.println("CT here #1");
         OrderTransaction transaction = transactionRepository.findByPaycomId(id);
-        System.out.println("CT here #2");
 
         if (transaction != null) {
 
@@ -202,9 +198,7 @@ public class MerchantService implements IMerchantService {
     @Override
     public Map<String, CheckTransactionResult> checkTransaction(String id) throws TransactionNotFoundException {
 
-        System.out.println("CT here #1");
         OrderTransaction transaction = transactionRepository.findByPaycomId(id);
-        System.out.println("CT here #2");
 
         if (transaction != null) {
 

@@ -1,8 +1,6 @@
 package kalesite.kalesite.Controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import kalesite.kalesite.Models.Payme.Entities.Account;
 import kalesite.kalesite.Models.Payme.Entities.OrderCancelReason;
 import kalesite.kalesite.Services.Payme.MerchantService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +16,6 @@ import java.util.Date;
 public class PaymeOrdersController {
 
     private final MerchantService merchantService;
-    private final ObjectMapper objectMapper;
 
     @PostMapping("/transactions")
     public ResponseEntity<?> handleTransaction(@RequestBody JsonNode jsonRequest) {
@@ -40,17 +37,13 @@ public class PaymeOrdersController {
                         id = idNode.asText();
                     }
 
-                    //Account account = objectMapper.treeToValue(params.get("account"), Account.class);
-
                     return ResponseEntity.ok(merchantService.checkPerformTransaction(amount, id));
 
                 case "CreateTransaction":
 
                     id = params.get("id").asText();
-                    System.out.println(id);
                     long time = params.get("time").longValue();
                     amount = params.get("amount").intValue();
-                    //account = objectMapper.treeToValue(params.get("account"), Account.class);
                     Date transactionDate = new Date(time);
 
                     return ResponseEntity.ok(merchantService.createTransaction(id, transactionDate, amount));
@@ -67,13 +60,14 @@ public class PaymeOrdersController {
 
                     return ResponseEntity.ok(merchantService.performTransaction(id));
 
-                    case "CancelTransaction":
+                case "CancelTransaction":
 
                     id = params.get("id").asText();
                     int reasonCode = params.get("reason").intValue();
 
                     OrderCancelReason reason = OrderCancelReason.fromCode(reasonCode);
-                        return ResponseEntity.ok(merchantService.cancelTransaction(id, reason));
+
+                    return ResponseEntity.ok(merchantService.cancelTransaction(id, reason));
 
                 case "GetStatement":
 

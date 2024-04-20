@@ -19,7 +19,7 @@ public class CustomerOrder {
     private Long id;
 
     @Column(unique = true)
-    private String stringId;
+    private String paycomId;
 
     private int amount;
     private boolean delivered;
