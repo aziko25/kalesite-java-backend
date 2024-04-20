@@ -36,11 +36,12 @@ public class MerchantService implements IMerchantService {
             if (order == null) {
                 throw new OrderNotExistsException();
             }
+
+            if (amount != order.getAmount()) {
+                throw new WrongAmountException();
+            }
         }
         System.out.println("CPT here #2");
-        if (amount != order.getAmount()) {
-            throw new WrongAmountException();
-        }
 
         return new CheckPerformTransactionResult(true);
     }
