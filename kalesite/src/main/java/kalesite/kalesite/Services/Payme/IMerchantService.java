@@ -7,18 +7,19 @@ import kalesite.kalesite.Models.Payme.Entities.Transactions;
 import kalesite.kalesite.Models.Payme.Result.*;
 
 import java.util.Date;
+import java.util.Map;
 
 public interface IMerchantService {
 
-    CheckPerformTransactionResult checkPerformTransaction(int amount, String id) throws WrongAmountException, OrderNotExistsException;
+    Map<String, CheckPerformTransactionResult> checkPerformTransaction(int amount, String id) throws WrongAmountException, OrderNotExistsException;
 
-    CreateTransactionResult createTransaction(String id, Date time, int amount) throws OrderNotExistsException, WrongAmountException, UnableCompleteException;
+    Map<String, CreateTransactionResult> createTransaction(String id, Date time, int amount) throws OrderNotExistsException, WrongAmountException, UnableCompleteException;
 
-    PerformTransactionResult performTransaction(String id) throws TransactionNotFoundException, UnableCompleteException;
+    Map<String, PerformTransactionResult> performTransaction(String id) throws TransactionNotFoundException, UnableCompleteException;
 
-    CancelTransactionResult cancelTransaction(String id, OrderCancelReason reason) throws TransactionNotFoundException, UnableCancelTransactionException;
+    Map<String, CancelTransactionResult> cancelTransaction(String id, OrderCancelReason reason) throws TransactionNotFoundException, UnableCancelTransactionException;
 
-    CheckTransactionResult checkTransaction(String id) throws TransactionNotFoundException;
+    Map<String, CheckTransactionResult> checkTransaction(String id) throws TransactionNotFoundException;
 
-    Transactions getStatement(Date from, Date to);
+    Map<String, Object> getStatement(Date from, Date to);
 }

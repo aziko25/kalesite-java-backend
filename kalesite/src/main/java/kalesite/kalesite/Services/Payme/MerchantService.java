@@ -8,9 +8,7 @@ import kalesite.kalesite.Repositories.Payme.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,7 +24,7 @@ public class MerchantService implements IMerchantService {
     private CustomerOrder order;
 
     @Override
-    public CheckPerformTransactionResult checkPerformTransaction(int amount, String id) throws WrongAmountException, OrderNotExistsException {
+    public Map<String, CheckPerformTransactionResult> checkPerformTransaction(int amount, String id) throws WrongAmountException, OrderNotExistsException {
 
         System.out.println("CPT here #1");
         if (id != null) {
@@ -43,11 +41,15 @@ public class MerchantService implements IMerchantService {
         }
         System.out.println("CPT here #2");
 
-        return new CheckPerformTransactionResult(true);
+        CheckPerformTransactionResult checkPerformTransactionResult = new CheckPerformTransactionResult(true);
+        Map<String, CheckPerformTransactionResult> result = new HashMap<>();
+        result.put("result", checkPerformTransactionResult);
+
+        return result;
     }
 
     @Override
-    public CreateTransactionResult createTransaction(String id, Date time, int amount) throws OrderNotExistsException, WrongAmountException, UnableCompleteException {
+    public Map<String, CreateTransactionResult> createTransaction(String id, Date time, int amount) throws OrderNotExistsException, WrongAmountException, UnableCompleteException {
 
         System.out.println("CT here #1");
         OrderTransaction transaction = transactionRepository.findByPaycomId(id);
@@ -55,7 +57,7 @@ public class MerchantService implements IMerchantService {
 
         if (transaction == null) {
 
-            if (checkPerformTransaction(amount, id).isAllow()) {
+            if (checkPerformTransaction(amount, id).get("result").isAllow()) {
 
                 OrderTransaction newTransaction = new OrderTransaction();
 
@@ -67,7 +69,11 @@ public class MerchantService implements IMerchantService {
 
                 transactionRepository.save(newTransaction);
 
-                return new CreateTransactionResult(newTransaction.getCreateTime(), newTransaction.getId(), newTransaction.getState().getCode());
+                CreateTransactionResult createTransactionResult = new CreateTransactionResult(newTransaction.getCreateTime(), newTransaction.getId(), newTransaction.getState().getCode());
+                Map<String, CreateTransactionResult> result = new HashMap<>();
+                result.put("result", createTransactionResult);
+
+                return result;
             }
         }
         else {
@@ -80,7 +86,11 @@ public class MerchantService implements IMerchantService {
                 }
                 else {
 
-                    return new CreateTransactionResult(transaction.getCreateTime(), transaction.getId(), transaction.getState().getCode());
+                    CreateTransactionResult createTransactionResult = new CreateTransactionResult(transaction.getCreateTime(), transaction.getId(), transaction.getState().getCode());
+                    Map<String, CreateTransactionResult> result = new HashMap<>();
+                    result.put("result", createTransactionResult);
+
+                    return result;
                 }
             }
             else {
@@ -93,7 +103,7 @@ public class MerchantService implements IMerchantService {
     }
 
     @Override
-    public PerformTransactionResult performTransaction(String id) throws TransactionNotFoundException, UnableCompleteException {
+    public Map<String, PerformTransactionResult> performTransaction(String id) throws TransactionNotFoundException, UnableCompleteException {
 
         System.out.println("PT here #1");
         OrderTransaction transaction = transactionRepository.findByPaycomId(id);
@@ -116,12 +126,20 @@ public class MerchantService implements IMerchantService {
                     transaction.setPerformTime(new Date());
                     transactionRepository.save(transaction);
 
-                    return new PerformTransactionResult(transaction.getId(), transaction.getPerformTime(), transaction.getState().getCode());
+                    PerformTransactionResult performTransactionResult = new PerformTransactionResult(transaction.getId(), transaction.getPerformTime(), transaction.getState().getCode());
+                    Map<String, PerformTransactionResult> result = new HashMap<>();
+                    result.put("result", performTransactionResult);
+
+                    return result;
                 }
             }
             else if (transaction.getState() == TransactionState.STATE_DONE) {
 
-                return new PerformTransactionResult(transaction.getId(), transaction.getPerformTime(), transaction.getState().getCode());
+                PerformTransactionResult performTransactionResult = new PerformTransactionResult(transaction.getId(), transaction.getPerformTime(), transaction.getState().getCode());
+                Map<String, PerformTransactionResult> result = new HashMap<>();
+                result.put("result", performTransactionResult);
+
+                return result;
             }
             else {
 
@@ -135,7 +153,7 @@ public class MerchantService implements IMerchantService {
     }
 
     @Override
-    public CancelTransactionResult cancelTransaction(String id, OrderCancelReason reason) throws TransactionNotFoundException, UnableCancelTransactionException {
+    public Map<String, CancelTransactionResult> cancelTransaction(String id, OrderCancelReason reason) throws TransactionNotFoundException, UnableCancelTransactionException {
 
         System.out.println("CT here #1");
         OrderTransaction transaction = transactionRepository.findByPaycomId(id);
@@ -162,7 +180,11 @@ public class MerchantService implements IMerchantService {
             transaction.setReason(reason);
             transactionRepository.save(transaction);
 
-            return new CancelTransactionResult(transaction.getId(), transaction.getCancelTime(), transaction.getState().getCode());
+            CancelTransactionResult cancelTransactionResult = new CancelTransactionResult(transaction.getId(), transaction.getCancelTime(), transaction.getState().getCode());
+            Map<String, CancelTransactionResult> result = new HashMap<>();
+            result.put("result", cancelTransactionResult);
+
+            return result;
         }
         else {
 
@@ -171,7 +193,7 @@ public class MerchantService implements IMerchantService {
     }
 
     @Override
-    public CheckTransactionResult checkTransaction(String id) throws TransactionNotFoundException {
+    public Map<String, CheckTransactionResult> checkTransaction(String id) throws TransactionNotFoundException {
 
         System.out.println("CT here #1");
         OrderTransaction transaction = transactionRepository.findByPaycomId(id);
@@ -179,13 +201,17 @@ public class MerchantService implements IMerchantService {
 
         if (transaction != null) {
 
-            return new CheckTransactionResult(
-                    transaction.getCreateTime(),
+            CheckTransactionResult checkTransactionResult = new CheckTransactionResult(transaction.getCreateTime(),
                     transaction.getPerformTime(),
                     transaction.getCancelTime(),
                     transaction.getId(),
                     transaction.getState().getCode(),
                     transaction.getReason() != null ? transaction.getReason().getCode() : null);
+
+            Map<String, CheckTransactionResult> result = new HashMap<>();
+            result.put("result", checkTransactionResult);
+
+            return result;
         }
         else {
 
@@ -194,7 +220,7 @@ public class MerchantService implements IMerchantService {
     }
 
     @Override
-    public Transactions getStatement(Date from, Date to) {
+    public Map<String, Object> getStatement(Date from, Date to) {
 
         List<GetStatementResult> results = new ArrayList<>();
 
@@ -218,6 +244,9 @@ public class MerchantService implements IMerchantService {
                     .collect(Collectors.toList());
         }
 
-        return new Transactions(results);
+        Map<String, Object> result = new HashMap<>();
+        result.put("result", new Transactions(results));
+
+        return result;
     }
 }
