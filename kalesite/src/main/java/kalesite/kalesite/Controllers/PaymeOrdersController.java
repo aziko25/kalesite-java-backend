@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/payme")
@@ -24,6 +26,20 @@ public class PaymeOrdersController {
 
             String method = jsonRequest.get("method").asText();
             JsonNode params = jsonRequest.get("params");
+            JsonNode account = params.get("account");
+
+            if (account == null || account.isEmpty()) {
+
+                Map<String, String> map = new HashMap<>();
+                map.put("error", "-32504");
+
+                Map<String, Object> result = new HashMap<>();
+
+                result.put("result", map);
+
+                return ResponseEntity.ok(result);
+            }
+
             String id = null;
 
             switch (method) {

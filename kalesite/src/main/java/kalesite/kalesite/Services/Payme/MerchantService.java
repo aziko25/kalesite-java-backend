@@ -24,15 +24,13 @@ public class MerchantService implements IMerchantService {
     private CustomerOrder order;
 
     @Override
-    public Map<String, CheckPerformTransactionResult> checkPerformTransaction(int amount, String id) throws WrongAmountException, OrderNotExistsException {
+    public Map<String, CheckPerformTransactionResult> checkPerformTransaction(int amount, String id) throws WrongAmountException {
 
         if (id != null) {
 
             order = orderRepository.findByStringId(id).orElse(null);
 
             if (order == null) {
-                System.out.println("order not exist");
-                //throw new OrderNotExistsException();
 
                 CheckPerformTransactionResult checkPerformTransactionResult = new CheckPerformTransactionResult(true);
                 Map<String, CheckPerformTransactionResult> result = new HashMap<>();
@@ -42,6 +40,7 @@ public class MerchantService implements IMerchantService {
             }
 
             if (amount != order.getAmount()) {
+
                 throw new WrongAmountException();
             }
         }
@@ -54,7 +53,7 @@ public class MerchantService implements IMerchantService {
     }
 
     @Override
-    public Map<String, CreateTransactionResult> createTransaction(String id, Date time, int amount) throws OrderNotExistsException, WrongAmountException, UnableCompleteException {
+    public Map<String, CreateTransactionResult> createTransaction(String id, Date time, int amount) throws WrongAmountException, UnableCompleteException {
 
         OrderTransaction transaction = transactionRepository.findByPaycomId(id);
 
