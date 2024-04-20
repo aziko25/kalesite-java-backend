@@ -28,7 +28,7 @@ public class MerchantService implements IMerchantService {
 
         if (id != null) {
 
-            order = orderRepository.findByStringId(id).orElse(null);
+            order = orderRepository.findByPaycomId(id).orElse(null);
 
             if (order == null) {
 
