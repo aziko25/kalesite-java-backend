@@ -11,5 +11,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Account {
 
-    private String order;
+    private Long order;
 }

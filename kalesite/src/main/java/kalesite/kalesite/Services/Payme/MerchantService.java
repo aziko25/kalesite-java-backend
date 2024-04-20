@@ -29,7 +29,7 @@ public class MerchantService implements IMerchantService {
     public CheckPerformTransactionResult checkPerformTransaction(int amount, String id) throws WrongAmountException, OrderNotExistsException {
 
         System.out.println("CPT here #1");
-        order = orderRepository.findById(id).orElse(null);
+        order = orderRepository.findByStringId(id).orElse(null);
         System.out.println("CPT here #2");
 
         if (order == null) {

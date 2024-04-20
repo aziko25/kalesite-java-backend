@@ -23,9 +23,9 @@ public class KalesiteApplication {
 	public CommandLineRunner prepare(OrderRepository repository) {
 
 		return args -> {
-			repository.save(new CustomerOrder("1", 50000, true));
-			repository.save(new CustomerOrder("2", 55000, false));
-			repository.save(new CustomerOrder("3", 60000, false));
+			repository.save(new CustomerOrder(100L, "1", 50000, true));
+			repository.save(new CustomerOrder(101L, "2", 55000, false));
+			repository.save(new CustomerOrder(102L, "3", 60000, false));
 		};
 	}
 

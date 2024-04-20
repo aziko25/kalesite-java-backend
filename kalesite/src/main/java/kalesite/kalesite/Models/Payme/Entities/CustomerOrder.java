@@ -16,7 +16,9 @@ public class CustomerOrder {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
+
+    private String stringId;
 
     private int amount;
     private boolean delivered;
