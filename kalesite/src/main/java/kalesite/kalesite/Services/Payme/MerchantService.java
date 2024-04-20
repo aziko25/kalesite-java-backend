@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class MerchantService {
+public class MerchantService implements IMerchantService {
 
     private static final long TIME_EXPIRED = 43_200_000L;
 
@@ -25,9 +25,12 @@ public class MerchantService {
 
     private CustomerOrder order;
 
+    @Override
     public CheckPerformTransactionResult checkPerformTransaction(int amount, Account account) throws WrongAmountException, OrderNotExistsException {
 
+        System.out.println("CPT here #1");
         order = orderRepository.findById(account.getOrder()).orElse(null);
+        System.out.println("CPT here #2");
 
         if (order == null) {
             throw new OrderNotExistsException();
@@ -39,9 +42,12 @@ public class MerchantService {
         return new CheckPerformTransactionResult(true);
     }
 
+    @Override
     public CreateTransactionResult createTransaction(String id, Date time, int amount, Account account) throws OrderNotExistsException, WrongAmountException, UnableCompleteException {
 
+        System.out.println("CT here #1");
         OrderTransaction transaction = transactionRepository.findByPaycomId(id);
+        System.out.println("CT here #2");
 
         if (transaction == null) {
 
@@ -82,9 +88,12 @@ public class MerchantService {
         throw new UnableCompleteException("Unable to complete transaction.");
     }
 
+    @Override
     public PerformTransactionResult performTransaction(String id) throws TransactionNotFoundException, UnableCompleteException {
 
+        System.out.println("PT here #1");
         OrderTransaction transaction = transactionRepository.findByPaycomId(id);
+        System.out.println("PT here #2");
 
         if (transaction != null) {
 
@@ -121,9 +130,12 @@ public class MerchantService {
         }
     }
 
+    @Override
     public CancelTransactionResult cancelTransaction(String id, OrderCancelReason reason) throws TransactionNotFoundException, UnableCancelTransactionException {
 
+        System.out.println("CT here #1");
         OrderTransaction transaction = transactionRepository.findByPaycomId(id);
+        System.out.println("CT here #2");
 
         if (transaction != null) {
 
@@ -154,9 +166,12 @@ public class MerchantService {
         }
     }
 
+    @Override
     public CheckTransactionResult checkTransaction(String id) throws TransactionNotFoundException {
 
+        System.out.println("CT here #1");
         OrderTransaction transaction = transactionRepository.findByPaycomId(id);
+        System.out.println("CT here #2");
 
         if (transaction != null) {
 
@@ -174,6 +189,7 @@ public class MerchantService {
         }
     }
 
+    @Override
     public Transactions getStatement(Date from, Date to) {
 
         List<GetStatementResult> results = new ArrayList<>();
