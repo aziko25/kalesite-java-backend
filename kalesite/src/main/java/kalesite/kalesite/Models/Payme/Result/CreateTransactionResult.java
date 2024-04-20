@@ -12,11 +12,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class CreateTransactionResult {
 
-    private long createTime;
-    private Long transaction;
+    private long create_time;
+    private String transaction;
     private Integer state;
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime.getTime();
-    }
 }

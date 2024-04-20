@@ -74,7 +74,7 @@ public class MerchantService implements IMerchantService {
 
                 transactionRepository.save(newTransaction);
 
-                CreateTransactionResult createTransactionResult = new CreateTransactionResult(newTransaction.getCreateTime(), newTransaction.getId(), newTransaction.getState().getCode());
+                CreateTransactionResult createTransactionResult = new CreateTransactionResult(newTransaction.getCreateTime(), newTransaction.getPaycomId(), newTransaction.getState().getCode());
                 Map<String, CreateTransactionResult> result = new HashMap<>();
                 result.put("result", createTransactionResult);
 
@@ -93,7 +93,7 @@ public class MerchantService implements IMerchantService {
                 }
                 else {
 
-                    CreateTransactionResult createTransactionResult = new CreateTransactionResult(transaction.getCreateTime(), transaction.getId(), transaction.getState().getCode());
+                    CreateTransactionResult createTransactionResult = new CreateTransactionResult(transaction.getCreateTime(), transaction.getPaycomId(), transaction.getState().getCode());
                     Map<String, CreateTransactionResult> result = new HashMap<>();
                     result.put("result", createTransactionResult);
 
