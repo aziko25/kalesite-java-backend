@@ -13,7 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class PerformTransactionResult {
 
-    private Long transaction;
-    private Long performTime;
+    private String transaction;
+    private Long perform_time;
     private Integer state;
 }

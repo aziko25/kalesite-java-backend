@@ -71,8 +71,8 @@ public class MerchantService implements IMerchantService {
                 newTransaction.setCreateTime(new Date());
                 newTransaction.setState(TransactionState.STATE_IN_PROGRESS);
                 newTransaction.setOrder(order);
-                newTransaction.setPerform_time(0L);
-                newTransaction.setCancel_time(0L);
+                newTransaction.setPerformTime(0L);
+                newTransaction.setCancelTime(0L);
 
                 transactionRepository.save(newTransaction);
 
@@ -133,7 +133,7 @@ public class MerchantService implements IMerchantService {
                     transaction.setPerformTimes(new Date());
                     transactionRepository.save(transaction);
 
-                    PerformTransactionResult performTransactionResult = new PerformTransactionResult(transaction.getId(), transaction.getPerform_time(), transaction.getState().getCode());
+                    PerformTransactionResult performTransactionResult = new PerformTransactionResult(transaction.getPaycomId(), transaction.getPerformTime(), transaction.getState().getCode());
                     Map<String, PerformTransactionResult> result = new HashMap<>();
                     result.put("result", performTransactionResult);
 
@@ -142,7 +142,7 @@ public class MerchantService implements IMerchantService {
             }
             else if (transaction.getState() == TransactionState.STATE_DONE) {
 
-                PerformTransactionResult performTransactionResult = new PerformTransactionResult(transaction.getId(), transaction.getPerform_time(), transaction.getState().getCode());
+                PerformTransactionResult performTransactionResult = new PerformTransactionResult(transaction.getPaycomId(), transaction.getPerformTime(), transaction.getState().getCode());
                 Map<String, PerformTransactionResult> result = new HashMap<>();
                 result.put("result", performTransactionResult);
 
@@ -187,7 +187,7 @@ public class MerchantService implements IMerchantService {
             transaction.setReason(reason);
             transactionRepository.save(transaction);
 
-            CancelTransactionResult cancelTransactionResult = new CancelTransactionResult(transaction.getId(), transaction.getCancel_time(), transaction.getState().getCode());
+            CancelTransactionResult cancelTransactionResult = new CancelTransactionResult(transaction.getPaycomId(), transaction.getCancelTime(), transaction.getState().getCode());
             Map<String, CancelTransactionResult> result = new HashMap<>();
             result.put("result", cancelTransactionResult);
 
@@ -209,8 +209,8 @@ public class MerchantService implements IMerchantService {
         if (transaction != null) {
 
             CheckTransactionResult checkTransactionResult = new CheckTransactionResult(transaction.getCreateTime(),
-                    transaction.getPerform_time(),
-                    transaction.getCancel_time(),
+                    transaction.getPerformTime(),
+                    transaction.getCancelTime(),
                     transaction.getPaycomId(),
                     transaction.getState().getCode(),
                     transaction.getReason() != null ? transaction.getReason().getCode() : null);
@@ -242,9 +242,9 @@ public class MerchantService implements IMerchantService {
                             transaction.getOrder() != null ? transaction.getOrder().getAmount() : null,
                             new Account(transaction.getOrder() != null ? transaction.getOrder().getId() : null),
                             transaction.getCreateTime(),
-                            transaction.getPerform_time(),
-                            transaction.getCancel_time(),
-                            transaction.getId(),
+                            transaction.getPerformTime(),
+                            transaction.getCancelTime(),
+                            transaction.getId().toString(),
                             transaction.getState().getCode(),
                             transaction.getReason() != null ? transaction.getReason().getCode() : null
                     ))

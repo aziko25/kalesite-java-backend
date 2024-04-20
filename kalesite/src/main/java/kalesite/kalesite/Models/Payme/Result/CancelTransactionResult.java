@@ -13,7 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class CancelTransactionResult {
 
-    private Long transaction;
-    private Long cancelTime;
+    private String transaction;
+    private Long cancel_time;
     private Integer state;
 }

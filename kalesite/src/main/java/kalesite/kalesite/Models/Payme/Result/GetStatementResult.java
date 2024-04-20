@@ -18,10 +18,10 @@ public class GetStatementResult {
     private Date time;
     private Integer amount;
     private Account account;
-    private Long createTime;
-    private Long performTime;
-    private Long cancelTime;
-    private Long transaction;
+    private Long create_time;
+    private Long perform_time;
+    private Long cancel_time;
+    private String transaction;
     private Integer state;
     private Integer reason;
 }
