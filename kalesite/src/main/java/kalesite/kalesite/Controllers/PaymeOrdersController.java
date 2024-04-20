@@ -27,14 +27,19 @@ public class PaymeOrdersController {
 
             String method = jsonRequest.get("method").asText();
             JsonNode params = jsonRequest.get("params");
-            String id;
+            String id = null;
 
             switch (method) {
 
                 case "CheckPerformTransaction":
 
                     int amount = params.get("amount").intValue();
-                    id = params.get("id").asText();
+                    JsonNode idNode = params.get("id");
+
+                    if (idNode != null) {
+                        id = idNode.asText();
+                    }
+
                     //Account account = objectMapper.treeToValue(params.get("account"), Account.class);
 
                     return ResponseEntity.ok(merchantService.checkPerformTransaction(amount, id));

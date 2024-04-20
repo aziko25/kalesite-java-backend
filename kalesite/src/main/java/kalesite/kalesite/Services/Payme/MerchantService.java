@@ -29,12 +29,15 @@ public class MerchantService implements IMerchantService {
     public CheckPerformTransactionResult checkPerformTransaction(int amount, String id) throws WrongAmountException, OrderNotExistsException {
 
         System.out.println("CPT here #1");
-        order = orderRepository.findByStringId(id).orElse(null);
-        System.out.println("CPT here #2");
+        if (id != null) {
 
-        if (order == null) {
-            throw new OrderNotExistsException();
+            order = orderRepository.findByStringId(id).orElse(null);
+
+            if (order == null) {
+                throw new OrderNotExistsException();
+            }
         }
+        System.out.println("CPT here #2");
         if (amount != order.getAmount()) {
             throw new WrongAmountException();
         }
