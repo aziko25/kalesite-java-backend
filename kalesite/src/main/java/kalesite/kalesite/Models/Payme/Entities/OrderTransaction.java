@@ -30,10 +30,12 @@ public class OrderTransaction {
     private Long createTime;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Long performTime;
+    @Column(name = "perform_time")
+    private Long perform_time;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Long cancelTime;
+    @Column(name = "cancel_time")
+    private Long cancel_time;
 
     @Enumerated(EnumType.STRING) // Assuming OrderCancelReason is an enum
     private OrderCancelReason reason;
@@ -49,10 +51,10 @@ public class OrderTransaction {
     }
 
     public void setPerformTimes(Date createTime) {
-        this.performTime = createTime.getTime();
+        this.perform_time = createTime.getTime();
     }
 
     public void setCancelTimes(Date createTime) {
-        this.cancelTime = createTime.getTime();
+        this.cancel_time = createTime.getTime();
     }
 }
