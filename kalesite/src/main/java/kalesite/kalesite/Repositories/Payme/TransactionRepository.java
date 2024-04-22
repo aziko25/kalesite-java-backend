@@ -1,5 +1,6 @@
 package kalesite.kalesite.Repositories.Payme;
 
+import kalesite.kalesite.Models.Payme.Entities.CustomerOrder;
 import kalesite.kalesite.Models.Payme.Entities.OrderTransaction;
 import kalesite.kalesite.Models.Payme.Entities.TransactionState;
 import org.springframework.data.jpa.repository.Query;
@@ -17,4 +18,6 @@ public interface TransactionRepository extends CrudRepository<OrderTransaction, 
     @Query("select o from OrderTransaction o " +
             "where o.paycomTime between ?1 and ?2 and o.state = ?3 ORDER BY o.paycomTime ASC")
     List<OrderTransaction> findByPaycomTimeAndState(Date from, Date to, TransactionState state);
+
+    OrderTransaction findByOrder(CustomerOrder order);
 }

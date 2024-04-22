@@ -45,7 +45,14 @@ public class MerchantService implements IMerchantService {
     @Override
     public Map<String, CreateTransactionResult> createTransaction(String id, Date time, int amount, Account account) throws WrongAmountException, UnableCompleteException, OrderNotExistsException {
 
-        OrderTransaction transaction = transactionRepository.findByPaycomId(id);
+        OrderTransaction transaction = transactionRepository.findByOrder(order);
+
+        if (transaction != null) {
+
+            throw new UnableCompleteException("Transaction Already Exists With This Order!");
+        }
+
+        transaction = transactionRepository.findByPaycomId(id);
 
         if (transaction == null) {
 
