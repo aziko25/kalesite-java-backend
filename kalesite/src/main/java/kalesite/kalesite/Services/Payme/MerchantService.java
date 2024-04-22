@@ -23,7 +23,6 @@ public class MerchantService {
 
     private CustomerOrder order;
 
-    //@Override
     public Map<String, CheckPerformTransactionResult> checkPerformTransaction(int amount, Account account) throws OrderNotExistsException, WrongAmountException {
 
         order = orderRepository.findById(account.getKaleUz()).orElseThrow(() -> new OrderNotExistsException("Order not found", -31050, "order"));
@@ -42,7 +41,6 @@ public class MerchantService {
         return result;
     }
 
-    //@Override
     public Map<String, CreateTransactionResult> createTransaction(String id, Date time, int amount, Account account) throws UnableCompleteException, OrderNotExistsException, WrongAmountException {
 
         OrderTransaction transaction = transactionRepository.findByOrder(order);
@@ -109,7 +107,6 @@ public class MerchantService {
         throw new UnableCompleteException("Unable to complete operation", -31008, "transaction");
     }
 
-    //@Override
     public Map<String, PerformTransactionResult> performTransaction(String id) throws TransactionNotFoundException, UnableCompleteException {
 
         OrderTransaction transaction = transactionRepository.findByPaycomId(id);
@@ -157,7 +154,6 @@ public class MerchantService {
         }
     }
 
-    //@Override
     public Map<String, CancelTransactionResult> cancelTransaction(String id, OrderCancelReason reason) throws TransactionNotFoundException, UnableCancelTransactionException {
 
         OrderTransaction transaction = transactionRepository.findByPaycomId(id);
@@ -200,7 +196,6 @@ public class MerchantService {
         }
     }
 
-    //@Override
     public Map<String, CheckTransactionResult> checkTransaction(String id) throws TransactionNotFoundException {
 
         OrderTransaction transaction = transactionRepository.findByPaycomId(id);
@@ -225,7 +220,6 @@ public class MerchantService {
         }
     }
 
-    //@Override
     public Map<String, Object> getStatement(Date from, Date to) {
 
         List<GetStatementResult> results = new ArrayList<>();
