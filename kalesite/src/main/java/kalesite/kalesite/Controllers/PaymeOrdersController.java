@@ -1,6 +1,7 @@
 package kalesite.kalesite.Controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import kalesite.kalesite.Models.Payme.Entities.Account;
 import kalesite.kalesite.Models.Payme.Entities.OrderCancelReason;
 import kalesite.kalesite.Services.Payme.MerchantService;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,8 @@ public class PaymeOrdersController {
 
             String method = jsonRequest.get("method").asText();
             JsonNode params = jsonRequest.get("params");
-            JsonNode account = params.get("account");
+            JsonNode accountJson = params.get("account");
+            Account account;
 
             String id = null;
 
@@ -41,7 +43,9 @@ public class PaymeOrdersController {
                         id = idNode.asText();
                     }
 
-                    return ResponseEntity.ok(merchantService.checkPerformTransaction(amount, id));
+                    account = new Account(accountJson.get("KaleUz").longValue());
+
+                    return ResponseEntity.ok(merchantService.checkPerformTransaction(amount, account));
 
                 case "CreateTransaction":
 
@@ -50,7 +54,9 @@ public class PaymeOrdersController {
                     amount = params.get("amount").intValue();
                     Date transactionDate = new Date(time);
 
-                    return ResponseEntity.ok(merchantService.createTransaction(id, transactionDate, amount));
+                    account = new Account(accountJson.get("KaleUz").longValue());
+
+                    return ResponseEntity.ok(merchantService.createTransaction(id, transactionDate, amount, account));
 
                 case "CheckTransaction":
 

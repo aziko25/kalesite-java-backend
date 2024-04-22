@@ -1,9 +1,6 @@
 package kalesite.kalesite.Services.Payme;
 
-import kalesite.kalesite.Exceptions.TransactionNotFoundException;
-import kalesite.kalesite.Exceptions.UnableCancelTransactionException;
-import kalesite.kalesite.Exceptions.UnableCompleteException;
-import kalesite.kalesite.Exceptions.WrongAmountException;
+import kalesite.kalesite.Exceptions.*;
 import kalesite.kalesite.Models.Payme.Entities.*;
 import kalesite.kalesite.Models.Payme.Result.*;
 import kalesite.kalesite.Repositories.Payme.OrderRepository;
@@ -27,29 +24,18 @@ public class MerchantService implements IMerchantService {
     private CustomerOrder order;
 
     @Override
-    public Map<String, CheckPerformTransactionResult> checkPerformTransaction(int amount, String id) throws WrongAmountException {
+    public Map<String, CheckPerformTransactionResult> checkPerformTransaction(int amount, Account account) throws WrongAmountException, OrderNotExistsException {
 
-        if (id != null) {
+        order = orderRepository.findOne(account.getKaleUz());
 
-            order = orderRepository.findByPaycomId(id).orElse(null);
+        if (order == null) {
 
-            if (order == null) {
+            throw new OrderNotExistsException();
+        }
 
-                CheckPerformTransactionResult errorResult = new CheckPerformTransactionResult();
+        if (amount != order.getAmount()) {
 
-                errorResult.setCode("-31050");
-                errorResult.setMessage("Order Not Found!");
-
-                Map<String, CheckPerformTransactionResult> result = new HashMap<>();
-                result.put("error", errorResult);
-
-                return result;
-            }
-
-            if (amount != order.getAmount()) {
-
-                throw new WrongAmountException();
-            }
+            throw new WrongAmountException();
         }
 
         CheckPerformTransactionResult checkPerformTransactionResult = new CheckPerformTransactionResult();
@@ -62,13 +48,13 @@ public class MerchantService implements IMerchantService {
     }
 
     @Override
-    public Map<String, CreateTransactionResult> createTransaction(String id, Date time, int amount) throws WrongAmountException, UnableCompleteException {
+    public Map<String, CreateTransactionResult> createTransaction(String id, Date time, int amount, Account account) throws WrongAmountException, UnableCompleteException, OrderNotExistsException {
 
         OrderTransaction transaction = transactionRepository.findByPaycomId(id);
 
         if (transaction == null) {
 
-            if (checkPerformTransaction(amount, id).get("result").isAllow()) {
+            if (checkPerformTransaction(amount, account).get("result").isAllow()) {
 
                 OrderTransaction newTransaction = new OrderTransaction();
 

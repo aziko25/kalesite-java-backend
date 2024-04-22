@@ -1,6 +1,7 @@
 package kalesite.kalesite.Services.Payme;
 
 import kalesite.kalesite.Exceptions.*;
+import kalesite.kalesite.Models.Payme.Entities.Account;
 import kalesite.kalesite.Models.Payme.Entities.OrderCancelReason;
 import kalesite.kalesite.Models.Payme.Result.*;
 
@@ -9,9 +10,9 @@ import java.util.Map;
 
 public interface IMerchantService {
 
-    Map<String, CheckPerformTransactionResult> checkPerformTransaction(int amount, String id) throws WrongAmountException;
+    Map<String, CheckPerformTransactionResult> checkPerformTransaction(int amount, Account account) throws WrongAmountException, OrderNotExistsException;
 
-    Map<String, CreateTransactionResult> createTransaction(String id, Date time, int amount) throws WrongAmountException, UnableCompleteException;
+    Map<String, CreateTransactionResult> createTransaction(String id, Date time, int amount, Account account) throws WrongAmountException, UnableCompleteException, OrderNotExistsException;
 
     Map<String, PerformTransactionResult> performTransaction(String id) throws TransactionNotFoundException, UnableCompleteException;
 

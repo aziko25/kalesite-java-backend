@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface OrderRepository extends CrudRepository<CustomerOrder, Long> {
 
     Optional<CustomerOrder> findByPaycomId(String id);
+
+    CustomerOrder findOne(Long kaleUz);
 }
