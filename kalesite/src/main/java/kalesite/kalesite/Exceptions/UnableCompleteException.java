@@ -1,11 +1,21 @@
 package kalesite.kalesite.Exceptions;
 
 public class UnableCompleteException extends Exception {
-    public UnableCompleteException() {
-        super();
+
+    private int code;
+    private String data;
+
+    public UnableCompleteException(String message, int code, String data) {
+        super(message);
+        this.code = code;
+        this.data = data;
     }
 
-    public UnableCompleteException(String message) {
-        super(message);
+    public int getCode() {
+        return code;
+    }
+
+    public String getData() {
+        return data;
     }
 }
