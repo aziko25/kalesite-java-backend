@@ -52,6 +52,11 @@ public class MerchantService {
             throw new UnableCompleteException("Unable to complete operation", -31050, "transaction");
         }
 
+        if (transaction != null && transaction.getOrder().getAmount() != amount) {
+
+            throw new UnableCompleteException("Wrong amount", -31001, "transaction");
+        }
+
         transaction = transactionRepository.findByPaycomId(id);
 
         if (transaction == null) {
