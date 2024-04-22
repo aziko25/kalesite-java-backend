@@ -167,6 +167,7 @@ public class MerchantService {
                 }
                 else {
 
+                    transaction.setCancelTimes(new Date());
                     transaction.setState(TransactionState.STATE_POST_CANCELED);
                 }
             }
@@ -179,7 +180,6 @@ public class MerchantService {
                 transaction.setState(TransactionState.STATE_CANCELED);
             }
 
-            transaction.setCancelTimes(new Date());
             transaction.setReason(reason);
             transactionRepository.save(transaction);
 
