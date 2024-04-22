@@ -49,7 +49,7 @@ public class MerchantService implements IMerchantService {
 
         if (transaction != null && !Objects.equals(id, transaction.getPaycomId())) {
 
-            throw new UnableCompleteException("Transaction Already Exists With This Order!");
+            throw new UnableCompleteException("Unable to complete operation", -31050, "transaction");
         }
 
         transaction = transactionRepository.findByPaycomId(id);
@@ -83,7 +83,8 @@ public class MerchantService implements IMerchantService {
 
                 if (System.currentTimeMillis() - transaction.getPaycomTime().getTime() > TIME_EXPIRED) {
 
-                    throw new UnableCompleteException("Transaction is timed out.");
+                    throw new UnableCompleteException("Transaction is timed out.", -31008, "transaction");
+
                 }
                 else {
 
@@ -96,11 +97,11 @@ public class MerchantService implements IMerchantService {
             }
             else {
 
-                throw new UnableCompleteException("Transaction state prevents completion.");
+                throw new UnableCompleteException("Transaction state prevents completion", -31008, "transaction");
             }
         }
 
-        throw new UnableCompleteException("Unable to complete transaction.");
+        throw new UnableCompleteException("Unable to complete operation", -31008, "transaction");
     }
 
     @Override
@@ -117,7 +118,7 @@ public class MerchantService implements IMerchantService {
                     transaction.setState(TransactionState.STATE_CANCELED);
                     transactionRepository.save(transaction);
 
-                    throw new UnableCompleteException("Transaction timed out and was canceled.");
+                    throw new UnableCompleteException("Transaction timed out and was canceled", -31008, "transaction");
                 }
                 else {
 
@@ -142,7 +143,7 @@ public class MerchantService implements IMerchantService {
             }
             else {
 
-                throw new UnableCompleteException("Transaction in an invalid state for completion.");
+                throw new UnableCompleteException("Transaction in an invalid state for completion.", -31008, "transaction");
             }
         }
         else {

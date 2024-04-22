@@ -1,63 +1,46 @@
 package kalesite.kalesite.Exceptions;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
-@Configuration
 public class GlobalExceptionHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    @ExceptionHandler(UnableCompleteException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ErrorResponse handleUnableCompleteException(UnableCompleteException e) {
 
-    @ExceptionHandler(value = OrderNotExistsException.class)
-    public ResponseEntity<ErrorResponse> handleOrderNotExistsException(OrderNotExistsException ex) {
-        log.error("Handling OrderNotExistsException: {}", ex.getMessage());
-        ErrorResponse errorResponse = new ErrorResponse(ex.getCode(), ex.getMessage(), ex.getData());
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
-    }
-}
+        System.out.println("handler is on the deal");
 
-@Getter
-@Setter
-class ErrorResponse {
-
-    private ErrorDetail error;
-
-    public ErrorResponse(int code, String message, String data) {
-        this.error = new ErrorDetail(code, message, data);
+        return new ErrorResponse(e.getCode(), e.getMessage(), e.getData());
     }
 
-    public ErrorDetail getError() {
-
-        return error;
-    }
-
-    public void setError(ErrorDetail error) {
-
-        this.error = error;
-    }
-
-    @Getter
-    @Setter
-    static class ErrorDetail {
-
+    static class ErrorResponse {
         private int code;
         private String message;
         private String data;
 
-        public ErrorDetail(int code, String message, String data) {
-
+        public ErrorResponse(int code, String message, String data) {
             this.code = code;
             this.message = message;
             this.data = data;
+        }
+
+        // Getters
+        public int getCode() {
+            return code;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public String getData() {
+            return data;
         }
     }
 }
