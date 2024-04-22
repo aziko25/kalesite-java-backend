@@ -20,6 +20,7 @@ public class GlobalExceptionHandler {
     }
 
     static class ErrorResponse {
+
         private int code;
         private String message;
         private String data;
@@ -30,7 +31,6 @@ public class GlobalExceptionHandler {
             this.data = data;
         }
 
-        // Getters
         public int getCode() {
             return code;
         }

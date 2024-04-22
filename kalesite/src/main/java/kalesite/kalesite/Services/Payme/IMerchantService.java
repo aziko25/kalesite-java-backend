@@ -1,5 +1,5 @@
 package kalesite.kalesite.Services.Payme;
-
+/*
 import kalesite.kalesite.Exceptions.*;
 import kalesite.kalesite.Models.Payme.Entities.Account;
 import kalesite.kalesite.Models.Payme.Entities.OrderCancelReason;
@@ -21,4 +21,4 @@ public interface IMerchantService {
     Map<String, CheckTransactionResult> checkTransaction(String id) throws TransactionNotFoundException;
 
     Map<String, Object> getStatement(Date from, Date to);
-}
+}*/

@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class MerchantService implements IMerchantService {
+public class MerchantService {
 
     private static final long TIME_EXPIRED = 43_200_000L;
 
@@ -23,8 +23,8 @@ public class MerchantService implements IMerchantService {
 
     private CustomerOrder order;
 
-    @Override
-    public Map<String, CheckPerformTransactionResult> checkPerformTransaction(int amount, Account account) throws WrongAmountException, OrderNotExistsException {
+    //@Override
+    public Map<String, CheckPerformTransactionResult> checkPerformTransaction(int amount, Account account) throws OrderNotExistsException, WrongAmountException {
 
         order = orderRepository.findById(account.getKaleUz()).orElseThrow(() -> new OrderNotExistsException("Order No Found!"));
 
@@ -42,8 +42,8 @@ public class MerchantService implements IMerchantService {
         return result;
     }
 
-    @Override
-    public Map<String, CreateTransactionResult> createTransaction(String id, Date time, int amount, Account account) throws WrongAmountException, UnableCompleteException, OrderNotExistsException {
+    //@Override
+    public Map<String, CreateTransactionResult> createTransaction(String id, Date time, int amount, Account account) throws UnableCompleteException, OrderNotExistsException, WrongAmountException {
 
         OrderTransaction transaction = transactionRepository.findByOrder(order);
 
@@ -104,7 +104,7 @@ public class MerchantService implements IMerchantService {
         throw new UnableCompleteException("Unable to complete operation", -31008, "transaction");
     }
 
-    @Override
+    //@Override
     public Map<String, PerformTransactionResult> performTransaction(String id) throws TransactionNotFoundException, UnableCompleteException {
 
         OrderTransaction transaction = transactionRepository.findByPaycomId(id);
@@ -152,7 +152,7 @@ public class MerchantService implements IMerchantService {
         }
     }
 
-    @Override
+    //@Override
     public Map<String, CancelTransactionResult> cancelTransaction(String id, OrderCancelReason reason) throws TransactionNotFoundException, UnableCancelTransactionException {
 
         OrderTransaction transaction = transactionRepository.findByPaycomId(id);
@@ -190,7 +190,7 @@ public class MerchantService implements IMerchantService {
         }
     }
 
-    @Override
+    //@Override
     public Map<String, CheckTransactionResult> checkTransaction(String id) throws TransactionNotFoundException {
 
         OrderTransaction transaction = transactionRepository.findByPaycomId(id);
@@ -215,7 +215,7 @@ public class MerchantService implements IMerchantService {
         }
     }
 
-    @Override
+    //@Override
     public Map<String, Object> getStatement(Date from, Date to) {
 
         List<GetStatementResult> results = new ArrayList<>();
