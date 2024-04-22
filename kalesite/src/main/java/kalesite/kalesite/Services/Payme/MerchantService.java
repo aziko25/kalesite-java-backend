@@ -1,6 +1,9 @@
 package kalesite.kalesite.Services.Payme;
 
-import kalesite.kalesite.Exceptions.*;
+import kalesite.kalesite.Exceptions.TransactionNotFoundException;
+import kalesite.kalesite.Exceptions.UnableCancelTransactionException;
+import kalesite.kalesite.Exceptions.UnableCompleteException;
+import kalesite.kalesite.Exceptions.WrongAmountException;
 import kalesite.kalesite.Models.Payme.Entities.*;
 import kalesite.kalesite.Models.Payme.Result.*;
 import kalesite.kalesite.Repositories.Payme.OrderRepository;
@@ -32,9 +35,13 @@ public class MerchantService implements IMerchantService {
 
             if (order == null) {
 
-                CheckPerformTransactionResult checkPerformTransactionResult = new CheckPerformTransactionResult(true);
+                CheckPerformTransactionResult errorResult = new CheckPerformTransactionResult();
+
+                errorResult.setCode("-31050");
+                errorResult.setMessage("Order Not Found!");
+
                 Map<String, CheckPerformTransactionResult> result = new HashMap<>();
-                result.put("result", checkPerformTransactionResult);
+                result.put("error", errorResult);
 
                 return result;
             }
@@ -45,7 +52,9 @@ public class MerchantService implements IMerchantService {
             }
         }
 
-        CheckPerformTransactionResult checkPerformTransactionResult = new CheckPerformTransactionResult(true);
+        CheckPerformTransactionResult checkPerformTransactionResult = new CheckPerformTransactionResult();
+        checkPerformTransactionResult.setAllow(true);
+
         Map<String, CheckPerformTransactionResult> result = new HashMap<>();
         result.put("result", checkPerformTransactionResult);
 

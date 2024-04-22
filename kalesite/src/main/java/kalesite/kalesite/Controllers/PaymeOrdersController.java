@@ -28,19 +28,6 @@ public class PaymeOrdersController {
             JsonNode params = jsonRequest.get("params");
             JsonNode account = params.get("account");
 
-            if (account == null || account.isEmpty()) {
-
-                Map<String, String> map = new HashMap<>();
-                map.put("code", "-32504");
-                map.put("message", "HE-HE-HE-HA");
-
-                Map<String, Object> result = new HashMap<>();
-
-                result.put("error", map);
-
-                return ResponseEntity.ok(result);
-            }
-
             String id = null;
 
             switch (method) {

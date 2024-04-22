@@ -12,4 +12,7 @@ import lombok.Setter;
 public class CheckPerformTransactionResult {
 
     private boolean allow;
+
+    private String code; // error code
+    private String message; // error message
 }
