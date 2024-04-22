@@ -56,7 +56,10 @@ public class PaymeOrdersController {
                 throw new UnableCompleteException("Corrupted headers", -32504, "authorization");
             }
         }
+        else {
 
+            throw new UnableCompleteException("Corrupted headers", -32504, "authorization");
+        }
 
         String method = jsonRequest.get("method").asText();
         JsonNode params = jsonRequest.get("params");
@@ -71,7 +74,12 @@ public class PaymeOrdersController {
 
                 int amount = params.get("amount").intValue();
 
-                account = new Account(Long.parseLong(accountJson.get("KaleUz").asText()));
+                if (!accountJson.isEmpty()) {
+                    account = new Account(Long.parseLong(accountJson.get("KaleUz").asText()));
+                }
+                else {
+                    account = new Account(1L);
+                }
 
                 return ResponseEntity.ok(merchantService.checkPerformTransaction(amount, account));
 
@@ -82,7 +90,12 @@ public class PaymeOrdersController {
                 amount = params.get("amount").intValue();
                 Date transactionDate = new Date(time);
 
-                account = new Account(Long.parseLong(accountJson.get("KaleUz").asText()));
+                if (!accountJson.isEmpty()) {
+                    account = new Account(Long.parseLong(accountJson.get("KaleUz").asText()));
+                }
+                else {
+                    account = new Account(1L);
+                }
 
                 return ResponseEntity.ok(merchantService.createTransaction(id, transactionDate, amount, account));
 
