@@ -41,7 +41,7 @@ public class PaymeOrdersController {
             }
             catch (IllegalArgumentException e) {
 
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Base64 encoding in credentials");
+                throw new UnableCompleteException("Corrupted headers", -32504, "authorization");
             }
 
             String[] values = credentials.split(":");
