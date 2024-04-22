@@ -45,13 +45,13 @@ public class MerchantService implements IMerchantService {
     @Override
     public Map<String, CreateTransactionResult> createTransaction(String id, Date time, int amount, Account account) throws WrongAmountException, UnableCompleteException, OrderNotExistsException {
 
-        OrderTransaction transaction = transactionRepository.findByPaycomId(id);
+        //OrderTransaction transaction = transactionRepository.findByPaycomId(id);
+        OrderTransaction transaction = transactionRepository.findByPaycomIdAndStateNotLike(id, TransactionState.valueOf("STATE_IN_PROGRESS"));
 
         if (transaction == null) {
 
             if (checkPerformTransaction(amount, account).get("result").isAllow()) {
 
-                System.out.println("#4");
                 OrderTransaction newTransaction = new OrderTransaction();
 
                 newTransaction.setPaycomId(id);
