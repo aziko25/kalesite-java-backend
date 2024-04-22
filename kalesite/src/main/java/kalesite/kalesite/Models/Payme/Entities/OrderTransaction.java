@@ -37,10 +37,10 @@ public class OrderTransaction {
     @Column(name = "cancel_time")
     private Long cancelTime;
 
-    @Enumerated(EnumType.STRING) // Assuming OrderCancelReason is an enum
+    @Enumerated(EnumType.STRING)
     private OrderCancelReason reason;
 
-    @Enumerated(EnumType.STRING) // Assuming TransactionState is an enum
+    @Enumerated(EnumType.STRING)
     private TransactionState state;
 
     @OneToOne
