@@ -30,18 +30,13 @@ public class PaymeOrdersController {
             JsonNode accountJson = params.get("account");
             Account account;
 
-            String id = null;
+            String id;
 
             switch (method) {
 
                 case "CheckPerformTransaction":
 
                     int amount = params.get("amount").intValue();
-                    JsonNode idNode = params.get("id");
-
-                    if (idNode != null) {
-                        id = idNode.asText();
-                    }
 
                     account = new Account(Long.parseLong(accountJson.get("KaleUz").asText()));
 

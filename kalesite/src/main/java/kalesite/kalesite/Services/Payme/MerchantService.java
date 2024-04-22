@@ -26,7 +26,6 @@ public class MerchantService implements IMerchantService {
     @Override
     public Map<String, CheckPerformTransactionResult> checkPerformTransaction(int amount, Account account) throws WrongAmountException, OrderNotExistsException {
 
-        System.out.println("here");
         order = orderRepository.findById(account.getKaleUz()).orElseThrow(() -> new OrderNotExistsException("Order No Found!"));
 
         if (amount != order.getAmount()) {
@@ -40,22 +39,16 @@ public class MerchantService implements IMerchantService {
         Map<String, CheckPerformTransactionResult> result = new HashMap<>();
         result.put("result", checkPerformTransactionResult);
 
-        System.out.println(result);
         return result;
     }
 
     @Override
     public Map<String, CreateTransactionResult> createTransaction(String id, Date time, int amount, Account account) throws WrongAmountException, UnableCompleteException, OrderNotExistsException {
 
-        System.out.println("#1");
         OrderTransaction transaction = transactionRepository.findByPaycomId(id);
-        System.out.println("#2 + " + id);
 
         if (transaction == null) {
 
-            System.out.println("#3");
-
-            System.out.println(checkPerformTransaction(amount, account).get("result"));
             if (checkPerformTransaction(amount, account).get("result").isAllow()) {
 
                 System.out.println("#4");
@@ -70,8 +63,6 @@ public class MerchantService implements IMerchantService {
                 newTransaction.setCancelTime(0L);
 
                 transactionRepository.save(newTransaction);
-
-                System.out.println("#5");
 
                 CreateTransactionResult createTransactionResult = new CreateTransactionResult(newTransaction.getCreateTime(), newTransaction.getPaycomId(), newTransaction.getState().getCode());
                 Map<String, CreateTransactionResult> result = new HashMap<>();
