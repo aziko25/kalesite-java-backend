@@ -1,6 +1,7 @@
 package kalesite.kalesite.Controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import kalesite.kalesite.Exceptions.*;
 import kalesite.kalesite.Models.Payme.Entities.Account;
 import kalesite.kalesite.Models.Payme.Entities.OrderCancelReason;
 import kalesite.kalesite.Services.Payme.MerchantService;
@@ -21,76 +22,69 @@ public class PaymeOrdersController {
     private final MerchantService merchantService;
 
     @PostMapping("/transactions")
-    public ResponseEntity<?> handleTransaction(@RequestBody JsonNode jsonRequest) {
+    public ResponseEntity<?> handleTransaction(@RequestBody JsonNode jsonRequest) throws OrderNotExistsException, WrongAmountException, UnableCompleteException, TransactionNotFoundException, UnableCancelTransactionException {
 
-        try {
+        String method = jsonRequest.get("method").asText();
+        JsonNode params = jsonRequest.get("params");
+        JsonNode accountJson = params.get("account");
+        Account account;
 
-            String method = jsonRequest.get("method").asText();
-            JsonNode params = jsonRequest.get("params");
-            JsonNode accountJson = params.get("account");
-            Account account;
+        String id;
 
-            String id;
+        switch (method) {
 
-            switch (method) {
+            case "CheckPerformTransaction":
 
-                case "CheckPerformTransaction":
+                int amount = params.get("amount").intValue();
 
-                    int amount = params.get("amount").intValue();
+                account = new Account(Long.parseLong(accountJson.get("KaleUz").asText()));
 
-                    account = new Account(Long.parseLong(accountJson.get("KaleUz").asText()));
+                return ResponseEntity.ok(merchantService.checkPerformTransaction(amount, account));
 
-                    return ResponseEntity.ok(merchantService.checkPerformTransaction(amount, account));
+            case "CreateTransaction":
 
-                case "CreateTransaction":
+                id = params.get("id").asText();
+                long time = params.get("time").longValue();
+                amount = params.get("amount").intValue();
+                Date transactionDate = new Date(time);
 
-                    id = params.get("id").asText();
-                    long time = params.get("time").longValue();
-                    amount = params.get("amount").intValue();
-                    Date transactionDate = new Date(time);
+                account = new Account(Long.parseLong(accountJson.get("KaleUz").asText()));
 
-                    account = new Account(Long.parseLong(accountJson.get("KaleUz").asText()));
+                return ResponseEntity.ok(merchantService.createTransaction(id, transactionDate, amount, account));
 
-                    return ResponseEntity.ok(merchantService.createTransaction(id, transactionDate, amount, account));
+            case "CheckTransaction":
 
-                case "CheckTransaction":
+                id = params.get("id").asText();
 
-                    id = params.get("id").asText();
+                return ResponseEntity.ok(merchantService.checkTransaction(id));
 
-                    return ResponseEntity.ok(merchantService.checkTransaction(id));
+            case "PerformTransaction":
 
-                case "PerformTransaction":
+                id = params.get("id").asText();
 
-                    id = params.get("id").asText();
+                return ResponseEntity.ok(merchantService.performTransaction(id));
 
-                    return ResponseEntity.ok(merchantService.performTransaction(id));
+            case "CancelTransaction":
 
-                case "CancelTransaction":
+                id = params.get("id").asText();
+                int reasonCode = params.get("reason").intValue();
 
-                    id = params.get("id").asText();
-                    int reasonCode = params.get("reason").intValue();
+                OrderCancelReason reason = OrderCancelReason.fromCode(reasonCode);
 
-                    OrderCancelReason reason = OrderCancelReason.fromCode(reasonCode);
+                return ResponseEntity.ok(merchantService.cancelTransaction(id, reason));
 
-                    return ResponseEntity.ok(merchantService.cancelTransaction(id, reason));
+            case "GetStatement":
 
-                case "GetStatement":
+                long from = params.get("from").longValue();
+                long to = params.get("to").longValue();
 
-                    long from = params.get("from").longValue();
-                    long to = params.get("to").longValue();
+                Date fromDate = new Date(from);
+                Date toDate = new Date(to);
 
-                    Date fromDate = new Date(from);
-                    Date toDate = new Date(to);
+                return ResponseEntity.ok(merchantService.getStatement(fromDate, toDate));
 
-                    return ResponseEntity.ok(merchantService.getStatement(fromDate, toDate));
-
-                default:
-                    return ResponseEntity.badRequest().body("Unsupported method");
-            }
-        }
-        catch (Exception e) {
-
-            return ResponseEntity.internalServerError().body("Error processing request: " + e.getMessage());
+            default:
+                return ResponseEntity.badRequest().body("Unsupported method");
         }
     }
 }

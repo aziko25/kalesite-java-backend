@@ -1,5 +1,6 @@
 package kalesite.kalesite.Exceptions;
 
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
+@ComponentScan
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(UnableCompleteException.class)
