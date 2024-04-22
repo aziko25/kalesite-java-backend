@@ -6,9 +6,12 @@ import kalesite.kalesite.Models.Payme.Entities.Account;
 import kalesite.kalesite.Models.Payme.Entities.OrderCancelReason;
 import kalesite.kalesite.Services.Payme.MerchantService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +25,38 @@ public class PaymeOrdersController {
     private final MerchantService merchantService;
 
     @PostMapping("/transactions")
-    public ResponseEntity<?> handleTransaction(@RequestBody JsonNode jsonRequest) throws OrderNotExistsException, WrongAmountException, UnableCompleteException, TransactionNotFoundException, UnableCancelTransactionException {
+    public ResponseEntity<?> handleTransaction(@RequestHeader(required = false) HttpHeaders headers,
+                                               @RequestBody JsonNode jsonRequest) throws OrderNotExistsException, WrongAmountException, UnableCompleteException, TransactionNotFoundException, UnableCancelTransactionException {
+
+        String authorization = headers.getFirst(HttpHeaders.AUTHORIZATION);
+
+        if (authorization != null && authorization.startsWith("Basic ")) {
+
+            String base64Credentials = authorization.substring("Basic ".length()).trim();
+            String credentials;
+
+            try {
+
+                credentials = new String(Base64.getDecoder().decode(base64Credentials));
+            }
+            catch (IllegalArgumentException e) {
+
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Base64 encoding in credentials");
+            }
+
+            String[] values = credentials.split(":");
+
+            if (values.length == 2) {
+
+                String username = values[0];
+                String password = values[1];
+            }
+            else {
+
+                throw new UnableCompleteException("Corrupted headers", -32504, "authorization");
+            }
+        }
+
 
         String method = jsonRequest.get("method").asText();
         JsonNode params = jsonRequest.get("params");
