@@ -26,7 +26,8 @@ public class MerchantService {
     //@Override
     public Map<String, CheckPerformTransactionResult> checkPerformTransaction(int amount, Account account) throws OrderNotExistsException, WrongAmountException {
 
-        order = orderRepository.findById(account.getKaleUz()).orElseThrow(() -> new OrderNotExistsException("Order No Found!"));
+        //order = orderRepository.findById(account.getKaleUz()).orElseThrow(() -> new OrderNotExistsException("Order No Found!"));
+        order = orderRepository.findById(account.getKaleUz()).orElseThrow(() -> new IllegalArgumentException("Order No Found!"));
 
         if (amount != order.getAmount()) {
 
@@ -49,7 +50,8 @@ public class MerchantService {
 
         if (transaction != null && !Objects.equals(id, transaction.getPaycomId())) {
 
-            throw new UnableCompleteException("Unable to complete operation", -31050, "transaction");
+            //throw new UnableCompleteException("Unable to complete operation", -31050, "transaction");
+            throw new IllegalArgumentException("Unable to complete opeartion");
         }
 
         transaction = transactionRepository.findByPaycomId(id);
