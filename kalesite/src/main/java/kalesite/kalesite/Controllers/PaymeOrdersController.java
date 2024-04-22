@@ -54,7 +54,7 @@ public class PaymeOrdersController {
                     amount = params.get("amount").intValue();
                     Date transactionDate = new Date(time);
 
-                    account = new Account(accountJson.get("KaleUz").longValue());
+                    account = new Account(Long.parseLong(accountJson.get("KaleUz").asText()));
 
                     return ResponseEntity.ok(merchantService.createTransaction(id, transactionDate, amount, account));
 
