@@ -47,7 +47,7 @@ public class MerchantService implements IMerchantService {
 
         OrderTransaction transaction = transactionRepository.findByOrder(order);
 
-        if (transaction != null) {
+        if (transaction != null && !Objects.equals(id, transaction.getPaycomId())) {
 
             throw new UnableCompleteException("Transaction Already Exists With This Order!");
         }
