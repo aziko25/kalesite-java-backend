@@ -5,8 +5,8 @@ import lombok.Getter;
 @Getter
 public class OrderNotExistsException extends Exception {
 
-    private int code;
-    private String data;
+    private final int code;
+    private final String data;
 
     public OrderNotExistsException() {
 
@@ -16,6 +16,17 @@ public class OrderNotExistsException extends Exception {
     }
 
     public OrderNotExistsException(String message) {
+
         super(message);
+        this.code = -31050;
+        this.data = "order";
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public String getData() {
+        return data;
     }
 }

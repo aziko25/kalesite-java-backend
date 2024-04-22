@@ -43,9 +43,7 @@ public class PaymeOrdersController {
                         id = idNode.asText();
                     }
 
-                    account = new Account(accountJson.get("KaleUz").longValue());
-
-                    System.out.println("KaleUz value: " + accountJson.get("KaleUz").longValue());
+                    account = new Account(Long.parseLong(accountJson.get("KaleUz").asText()));
 
                     return ResponseEntity.ok(merchantService.checkPerformTransaction(amount, account));
 
