@@ -26,12 +26,7 @@ public class MerchantService implements IMerchantService {
     @Override
     public Map<String, CheckPerformTransactionResult> checkPerformTransaction(int amount, Account account) throws WrongAmountException, OrderNotExistsException {
 
-        order = orderRepository.findOne(account.getKaleUz());
-
-        if (order == null) {
-
-            throw new OrderNotExistsException();
-        }
+        order = orderRepository.findById(account.getKaleUz()).orElseThrow(OrderNotExistsException::new);
 
         if (amount != order.getAmount()) {
 
