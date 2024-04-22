@@ -73,8 +73,6 @@ public class MerchantService implements IMerchantService {
         }
         else {
 
-            System.out.println("transaction found");
-
             if (transaction.getState() == TransactionState.STATE_IN_PROGRESS) {
 
                 if (System.currentTimeMillis() - transaction.getPaycomTime().getTime() > TIME_EXPIRED) {
