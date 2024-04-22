@@ -170,7 +170,12 @@ public class MerchantService {
                     transaction.setState(TransactionState.STATE_POST_CANCELED);
                 }
             }
+            else if (transaction.getState() == TransactionState.STATE_POST_CANCELED) {
+
+                transaction.setState(TransactionState.STATE_POST_CANCELED);
+            }
             else {
+
                 transaction.setState(TransactionState.STATE_CANCELED);
             }
 
