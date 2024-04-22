@@ -45,6 +45,8 @@ public class PaymeOrdersController {
 
                     account = new Account(accountJson.get("KaleUz").longValue());
 
+                    System.out.println("KaleUz value: " + accountJson.get("KaleUz").longValue());
+
                     return ResponseEntity.ok(merchantService.checkPerformTransaction(amount, account));
 
                 case "CreateTransaction":
