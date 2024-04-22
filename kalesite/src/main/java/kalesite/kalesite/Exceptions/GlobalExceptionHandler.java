@@ -9,17 +9,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
-@ComponentScan
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(UnableCompleteException.class)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public ErrorResponse handleUnableCompleteException(UnableCompleteException e) {
+    public ErrorResponseWrapper handleUnableCompleteException(UnableCompleteException e) {
 
-        System.out.println("handler is on the deal");
-
-        return new ErrorResponse(e.getCode(), e.getMessage(), e.getData());
+        ErrorResponse errorResponse = new ErrorResponse("2.0", e.getCode(), e.getMessage(), e.getData());
+        return new ErrorResponseWrapper(errorResponse);
     }
 
     @ExceptionHandler(value = IllegalArgumentException.class)
@@ -28,13 +26,28 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    static class ErrorResponseWrapper {
+
+        private final ErrorResponse error;
+
+        public ErrorResponseWrapper(ErrorResponse error) {
+            this.error = error;
+        }
+
+        public ErrorResponse getError() {
+            return error;
+        }
+    }
+
     static class ErrorResponse {
 
-        private int code;
-        private String message;
-        private String data;
+        private final String jsonrpc;
+        private final int code;
+        private final String message;
+        private final String data;
 
-        public ErrorResponse(int code, String message, String data) {
+        public ErrorResponse(String jsonrpc, int code, String message, String data) {
+            this.jsonrpc = jsonrpc;
             this.code = code;
             this.message = message;
             this.data = data;
@@ -51,5 +64,7 @@ public class GlobalExceptionHandler {
         public String getData() {
             return data;
         }
+
+        public String getJsonrpc() { return jsonrpc; }
     }
 }
