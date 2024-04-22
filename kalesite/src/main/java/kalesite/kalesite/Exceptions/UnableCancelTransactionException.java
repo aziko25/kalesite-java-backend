@@ -1,11 +1,21 @@
 package kalesite.kalesite.Exceptions;
 
 public class UnableCancelTransactionException extends Exception {
-    public UnableCancelTransactionException() {
-        super();
+
+    private int code;
+    private String data;
+
+    public UnableCancelTransactionException(String message, int code, String data) {
+        super(message);
+        this.code = code;
+        this.data = data;
     }
 
-    public UnableCancelTransactionException(String message) {
-        super(message);
+    public int getCode() {
+        return code;
+    }
+
+    public String getData() {
+        return data;
     }
 }

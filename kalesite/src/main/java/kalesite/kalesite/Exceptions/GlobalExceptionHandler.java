@@ -17,13 +17,48 @@ public class GlobalExceptionHandler {
     public ErrorResponseWrapper handleUnableCompleteException(UnableCompleteException e) {
 
         ErrorResponse errorResponse = new ErrorResponse("2.0", e.getCode(), e.getMessage(), e.getData());
+
         return new ErrorResponseWrapper(errorResponse);
     }
 
-    @ExceptionHandler(value = IllegalArgumentException.class)
-    public ResponseEntity<Object> illegalArgumentException(IllegalArgumentException exception) {
+    @ExceptionHandler(WrongAmountException.class)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public ErrorResponseWrapper handleWrongAmountException(WrongAmountException e) {
 
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+        ErrorResponse errorResponse = new ErrorResponse("2.0", e.getCode(), e.getMessage(), e.getData());
+
+        return new ErrorResponseWrapper(errorResponse);
+    }
+
+    @ExceptionHandler(OrderNotExistsException.class)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public ErrorResponseWrapper handleOrderNotExistException(OrderNotExistsException e) {
+
+        ErrorResponse errorResponse = new ErrorResponse("2.0", e.getCode(), e.getMessage(), e.getData());
+
+        return new ErrorResponseWrapper(errorResponse);
+    }
+
+    @ExceptionHandler(TransactionNotFoundException.class)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public ErrorResponseWrapper handleTransactionNotFoundException(TransactionNotFoundException e) {
+
+        ErrorResponse errorResponse = new ErrorResponse("2.0", e.getCode(), e.getMessage(), e.getData());
+
+        return new ErrorResponseWrapper(errorResponse);
+    }
+
+    @ExceptionHandler(UnableCancelTransactionException.class)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public ErrorResponseWrapper handleUnableCancelTransactionException(UnableCancelTransactionException e) {
+
+        ErrorResponse errorResponse = new ErrorResponse("2.0", e.getCode(), e.getMessage(), e.getData());
+
+        return new ErrorResponseWrapper(errorResponse);
     }
 
     static class ErrorResponseWrapper {

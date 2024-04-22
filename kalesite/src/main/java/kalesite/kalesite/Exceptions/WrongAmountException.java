@@ -1,12 +1,21 @@
 package kalesite.kalesite.Exceptions;
 
 public class WrongAmountException extends Exception {
-    public WrongAmountException() {
-        super();
+    private int code;
+    private String data;
+
+    public WrongAmountException(String message, int code, String data) {
+        super(message);
+        this.code = code;
+        this.data = data;
     }
 
-    public WrongAmountException(String message) {
-        super(message);
+    public int getCode() {
+        return code;
+    }
+
+    public String getData() {
+        return data;
     }
 }
 

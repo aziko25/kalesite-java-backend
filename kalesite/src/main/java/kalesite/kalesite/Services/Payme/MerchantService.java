@@ -26,11 +26,11 @@ public class MerchantService {
     //@Override
     public Map<String, CheckPerformTransactionResult> checkPerformTransaction(int amount, Account account) throws OrderNotExistsException, WrongAmountException {
 
-        order = orderRepository.findById(account.getKaleUz()).orElseThrow(() -> new OrderNotExistsException("Order No Found!"));
+        order = orderRepository.findById(account.getKaleUz()).orElseThrow(() -> new OrderNotExistsException("Order not found", -31050, "order"));
 
         if (amount != order.getAmount()) {
 
-            throw new WrongAmountException();
+            throw new WrongAmountException("Wrong amount", -31001, "amount");
         }
 
         CheckPerformTransactionResult checkPerformTransactionResult = new CheckPerformTransactionResult();
@@ -148,7 +148,7 @@ public class MerchantService {
         }
         else {
 
-            throw new TransactionNotFoundException("Transaction not found.");
+            throw new TransactionNotFoundException("Order transaction not found", -31003, "transaction");
         }
     }
 
@@ -163,7 +163,7 @@ public class MerchantService {
 
                 if (Boolean.TRUE.equals(transaction.getOrder() != null && transaction.getOrder().isDelivered())) {
 
-                    throw new UnableCancelTransactionException("Transaction cannot be canceled as the order has been delivered.");
+                    throw new UnableCancelTransactionException("Transaction cannot be canceled as the order has been delivered.", -31007, "transaction");
                 }
                 else {
 
@@ -186,7 +186,7 @@ public class MerchantService {
         }
         else {
 
-            throw new TransactionNotFoundException("Transaction not found.");
+            throw new TransactionNotFoundException("Order transaction not found", -31003, "transaction");
         }
     }
 
@@ -211,7 +211,7 @@ public class MerchantService {
         }
         else {
 
-            throw new TransactionNotFoundException("Transaction not found.");
+            throw new TransactionNotFoundException("Order transaction not found", -31003, "transaction");
         }
     }
 
