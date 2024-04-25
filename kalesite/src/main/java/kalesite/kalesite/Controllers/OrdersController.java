@@ -399,15 +399,18 @@ public class OrdersController {
         }
         else if (order.getPaymentType() == 1) {
 
+            long amount = (long) (orderTotalSum * 100); // тиины
+            int amo = (int) (orderTotalSum * 100);
+
             CustomerOrder customerOrder = new CustomerOrder();
             customerOrder.setPaycomId(order.getId().toString());
             customerOrder.setDelivered(false);
+            customerOrder.setAmount(amo);
             orderRepository.save(customerOrder);
 
             String paymeUrl = "https://checkout.paycom.uz";
             String merchantId = "65e2f91cf4193eeca0afd4b0";
-            //long amount = (long) (orderTotalSum * 100); // тиины
-            double amount = orderTotalSum;
+            //double amount = orderTotalSum;
             String orderId = order.getId().toString();
             String returnUrl = "https://kale.mdholding.uz/profile/purchases-history";
 
