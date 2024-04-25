@@ -154,7 +154,7 @@ public class MerchantService {
         }
     }
 
-    public Map<String, CancelTransactionResult> cancelTransaction(String id, OrderCancelReason reason) throws TransactionNotFoundException, UnableCancelTransactionException {
+    /*public Map<String, CancelTransactionResult> cancelTransaction(String id, OrderCancelReason reason) throws TransactionNotFoundException, UnableCancelTransactionException {
 
         OrderTransaction transaction = transactionRepository.findByPaycomId(id);
 
@@ -194,7 +194,54 @@ public class MerchantService {
 
             throw new TransactionNotFoundException("Order transaction not found", -31003, "transaction");
         }
+    }*/
+
+    public Map<String, CancelTransactionResult> cancelTransaction(String id, OrderCancelReason reason) throws UnableCancelTransactionException, TransactionNotFoundException {
+
+        OrderTransaction transaction = transactionRepository.findByPaycomId(id);
+
+        if (transaction != null) {
+
+            switch (transaction.getState()) {
+
+                case STATE_IN_PROGRESS:
+                    transaction.setState(TransactionState.STATE_CANCELED);
+                    break;
+
+                case STATE_DONE:
+
+                    if (Boolean.TRUE.equals(transaction.getOrder() != null && transaction.getOrder().isDelivered())) {
+
+                        throw new UnableCancelTransactionException("Transaction cannot be canceled as the order has been delivered.", -31007, "transaction");
+                    }
+                    else {
+
+                        transaction.setState(TransactionState.STATE_POST_CANCELED);
+                    }
+                    break;
+
+                default:
+                    transaction.setState(TransactionState.STATE_CANCELED);
+                    break;
+            }
+
+            transaction.setCancelTimes(new Date());
+            transaction.setReason(reason);
+            transactionRepository.save(transaction);
+
+            CancelTransactionResult cancelTransactionResult = new CancelTransactionResult(transaction.getPaycomId(), transaction.getCancelTime(), transaction.getState().getCode());
+
+            Map<String, CancelTransactionResult> result = new HashMap<>();
+            result.put("result", cancelTransactionResult);
+
+            return result;
+        }
+        else {
+
+            throw new TransactionNotFoundException("Order transaction not found", -31003, "transaction");
+        }
     }
+
 
     public Map<String, CheckTransactionResult> checkTransaction(String id) throws TransactionNotFoundException {
 
