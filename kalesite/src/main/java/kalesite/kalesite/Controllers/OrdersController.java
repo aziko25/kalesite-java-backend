@@ -400,14 +400,14 @@ public class OrdersController {
         else if (order.getPaymentType() == 1) {
 
             CustomerOrder customerOrder = new CustomerOrder();
-            customerOrder.setPaycomId(order.getCode());
+            customerOrder.setPaycomId(order.getId().toString());
             customerOrder.setDelivered(false);
             orderRepository.save(customerOrder);
 
             String paymeUrl = "https://checkout.paycom.uz";
             String merchantId = "65e2f91cf4193eeca0afd4b0";
             long amount = (long) (orderTotalSum * 100); // тиины
-            String orderId = order.getCode();
+            String orderId = order.getId().toString();
             String returnUrl = "https://kale.mdholding.uz/profile/purchases-history";
 
             String data = "m=" + merchantId + ";ac.KaleUz=" + orderId + ";a=" + amount + ";c=" + returnUrl;
