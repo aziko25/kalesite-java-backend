@@ -402,7 +402,7 @@ public class OrdersController {
             String orderId = order.getId().toString();
             String returnUrl = "https://kale.mdholding.uz/profile/purchases-history";
 
-            String data = "m=" + merchantId + ";ac.order_id=" + orderId + ";a=" + amount + ";c=" + returnUrl;
+            String data = "m=" + merchantId + ";ac.KaleUz=" + orderId + ";a=" + amount + ";c=" + returnUrl;
             String encodedData = Base64.getEncoder().encodeToString(data.getBytes());
 
             String url = paymeUrl + "/" + encodedData;
