@@ -19,6 +19,8 @@ public interface TransactionRepository extends CrudRepository<OrderTransaction, 
             "where o.paycomTime between ?1 and ?2 and o.state = ?3 ORDER BY o.paycomTime ASC")
     List<OrderTransaction> findByPaycomTimeAndState(Date from, Date to, TransactionState state);
 
+    List<OrderTransaction> findByPaycomTimeBetweenAndState(Date from, Date to, TransactionState state);
+
     OrderTransaction findByOrder(CustomerOrder order);
 
     OrderTransaction findFirstByPaycomId(String paycomId);

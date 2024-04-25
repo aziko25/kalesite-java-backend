@@ -271,7 +271,8 @@ public class MerchantService {
 
         List<GetStatementResult> results = new ArrayList<>();
 
-        List<OrderTransaction> transactions = transactionRepository.findByPaycomTimeAndState(from, to, TransactionState.STATE_DONE);
+        List<OrderTransaction> transactions = transactionRepository.findByPaycomTimeBetweenAndState(
+                from, to, TransactionState.STATE_DONE);
 
         if (transactions != null) {
 
