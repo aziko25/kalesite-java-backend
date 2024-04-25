@@ -283,8 +283,8 @@ public class MerchantService {
         //List<OrderTransaction> transactions = transactionRepository.findByPaycomTimeBetweenAndState(
               //  from, to, TransactionState.STATE_DONE);
 
-        List<OrderTransaction> transactions = transactionRepository.findByPaycomTimeBetween(
-                from, to);
+        List<OrderTransaction> transactions = transactionRepository.findByCreateTimeBetween(
+                from.getTime(), to.getTime());
 
         if (transactions != null) {
 
