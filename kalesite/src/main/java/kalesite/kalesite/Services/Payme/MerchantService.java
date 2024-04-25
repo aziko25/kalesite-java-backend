@@ -43,7 +43,7 @@ public class MerchantService {
 
     public Map<String, CreateTransactionResult> createTransaction(String id, Date time, int amount, Account account) throws UnableCompleteException, OrderNotExistsException, WrongAmountException {
 
-        OrderTransaction transaction = transactionRepository.findByOrder(order);
+        OrderTransaction transaction = transactionRepository.findFirstByOrder(order);
 
         if (transaction != null && !Objects.equals(id, transaction.getPaycomId())) {
 

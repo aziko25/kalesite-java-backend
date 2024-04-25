@@ -22,4 +22,6 @@ public interface TransactionRepository extends CrudRepository<OrderTransaction, 
     OrderTransaction findByOrder(CustomerOrder order);
 
     OrderTransaction findFirstByPaycomId(String paycomId);
+
+    OrderTransaction findFirstByOrder(CustomerOrder order);
 }
