@@ -11,5 +11,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Account {
 
-    private Long KaleUz;
+    private String KaleUz;
 }

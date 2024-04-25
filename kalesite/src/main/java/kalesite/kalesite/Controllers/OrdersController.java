@@ -5,12 +5,14 @@ import kalesite.kalesite.Models.Address_Addresses;
 import kalesite.kalesite.Models.Orders.Order_OrderProducts;
 import kalesite.kalesite.Models.Orders.Order_Order_Products;
 import kalesite.kalesite.Models.Orders.Order_Orders;
+import kalesite.kalesite.Models.Payme.Entities.CustomerOrder;
 import kalesite.kalesite.Models.Products.Product_Products;
 import kalesite.kalesite.Models.User_Users;
 import kalesite.kalesite.Repositories.Address_AddressesRepository;
 import kalesite.kalesite.Repositories.Orders.Order_OrderProductRepository;
 import kalesite.kalesite.Repositories.Orders.Order_Order_ProductsRepository;
 import kalesite.kalesite.Repositories.Orders.Order_OrdersRepository;
+import kalesite.kalesite.Repositories.Payme.OrderRepository;
 import kalesite.kalesite.Repositories.Products.Product_ProductsRepository;
 import kalesite.kalesite.Repositories.User_UsersRepository;
 import kalesite.kalesite.Telegram.MainTelegramBot;
@@ -43,6 +45,7 @@ public class OrdersController {
     private final User_UsersRepository user_usersRepository;
     private final MainTelegramBot telegramBot;
     private final Address_AddressesRepository address_addressesRepository;
+    private final OrderRepository orderRepository;
 
     @Value("${orders_chat_id}")
     private String chatId;
@@ -395,6 +398,11 @@ public class OrdersController {
             billingUrl.setBilling_url("https://kale.mdholding.uz/profile/purchases-history");
         }
         else if (order.getPaymentType() == 1) {
+
+            CustomerOrder customerOrder = new CustomerOrder();
+            customerOrder.setPaycomId(order.getCode());
+            customerOrder.setDelivered(false);
+            orderRepository.save(customerOrder);
 
             String paymeUrl = "https://checkout.paycom.uz";
             String merchantId = "65e2f91cf4193eeca0afd4b0";

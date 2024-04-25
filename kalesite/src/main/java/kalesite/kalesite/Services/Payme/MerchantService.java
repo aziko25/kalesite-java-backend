@@ -25,7 +25,7 @@ public class MerchantService {
 
     public Map<String, CheckPerformTransactionResult> checkPerformTransaction(int amount, Account account) throws OrderNotExistsException, WrongAmountException {
 
-        order = orderRepository.findById(account.getKaleUz()).orElseThrow(() -> new OrderNotExistsException("Order not found", -31050, "order"));
+        order = orderRepository.findByPaycomId(account.getKaleUz()).orElseThrow(() -> new OrderNotExistsException("Order not found", -31050, "order"));
 
         if (amount != order.getAmount()) {
 
@@ -293,7 +293,7 @@ public class MerchantService {
                             transaction.getPaycomId(),
                             transaction.getPaycomTime(),
                             transaction.getOrder() != null ? transaction.getOrder().getAmount() : null,
-                            new Account(transaction.getOrder() != null ? transaction.getOrder().getId() : null),
+                            new Account(transaction.getOrder().toString() != null ? transaction.getOrder().getId().toString() : null),
                             transaction.getCreateTime(),
                             transaction.getPerformTime(),
                             transaction.getCancelTime(),
