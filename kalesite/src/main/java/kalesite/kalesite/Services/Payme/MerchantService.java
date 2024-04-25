@@ -230,7 +230,7 @@ public class MerchantService {
                     break;
             }
 
-            if (transaction.getCancelTime() == null) {
+            if (transaction.getCancelTime() == null || transaction.getCancelTime() == 0) {
 
                 transaction.setCancelTimes(new Date());
             }
