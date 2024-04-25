@@ -407,6 +407,8 @@ public class OrdersController {
 
             String url = paymeUrl + "/" + encodedData;
 
+            System.out.println(url);
+
             billingUrl.setBilling_url(url);
         }
 
