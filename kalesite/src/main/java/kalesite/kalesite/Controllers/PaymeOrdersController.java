@@ -75,10 +75,10 @@ public class PaymeOrdersController {
                 int amount = params.get("amount").intValue();
 
                 if (!accountJson.isEmpty()) {
-                    account = new Account(Long.parseLong(accountJson.get("KaleUz").asText()));
+                    account = new Account(accountJson.get("KaleUz").asText());
                 }
                 else {
-                    account = new Account(1L);
+                    account = new Account("1");
                 }
 
                 return ResponseEntity.ok(merchantService.checkPerformTransaction(amount, account));
@@ -91,10 +91,10 @@ public class PaymeOrdersController {
                 Date transactionDate = new Date(time);
 
                 if (!accountJson.isEmpty()) {
-                    account = new Account(Long.parseLong(accountJson.get("KaleUz").asText()));
+                    account = new Account(accountJson.get("KaleUz").asText());
                 }
                 else {
-                    account = new Account(1L);
+                    account = new Account("1");
                 }
 
                 return ResponseEntity.ok(merchantService.createTransaction(id, transactionDate, amount, account));
