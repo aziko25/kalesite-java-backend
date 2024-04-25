@@ -205,6 +205,7 @@ public class MerchantService {
             switch (transaction.getState()) {
 
                 case STATE_IN_PROGRESS:
+
                     transaction.setState(TransactionState.STATE_CANCELED);
                     break;
 
@@ -220,12 +221,20 @@ public class MerchantService {
                     }
                     break;
 
+                case STATE_POST_CANCELED:
+
+                    break;
+
                 default:
                     transaction.setState(TransactionState.STATE_CANCELED);
                     break;
             }
 
-            transaction.setCancelTimes(new Date());
+            if (transaction.getCancelTime() == null) {
+
+                transaction.setCancelTimes(new Date());
+            }
+
             transaction.setReason(reason);
             transactionRepository.save(transaction);
 
@@ -271,8 +280,11 @@ public class MerchantService {
 
         List<GetStatementResult> results = new ArrayList<>();
 
-        List<OrderTransaction> transactions = transactionRepository.findByPaycomTimeBetweenAndState(
-                from, to, TransactionState.STATE_DONE);
+        //List<OrderTransaction> transactions = transactionRepository.findByPaycomTimeBetweenAndState(
+              //  from, to, TransactionState.STATE_DONE);
+
+        List<OrderTransaction> transactions = transactionRepository.findByPaycomTimeBetween(
+                from, to);
 
         if (transactions != null) {
 
