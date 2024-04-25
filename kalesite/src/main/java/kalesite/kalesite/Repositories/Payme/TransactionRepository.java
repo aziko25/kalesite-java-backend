@@ -20,4 +20,6 @@ public interface TransactionRepository extends CrudRepository<OrderTransaction, 
     List<OrderTransaction> findByPaycomTimeAndState(Date from, Date to, TransactionState state);
 
     OrderTransaction findByOrder(CustomerOrder order);
+
+    OrderTransaction findFirstByPaycomId(String paycomId);
 }

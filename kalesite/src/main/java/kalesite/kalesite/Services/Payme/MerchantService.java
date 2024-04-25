@@ -55,7 +55,7 @@ public class MerchantService {
             throw new UnableCompleteException("Wrong amount", -31001, "transaction");
         }
 
-        transaction = transactionRepository.findByPaycomId(id);
+        transaction = transactionRepository.findFirstByPaycomId(id);
 
         if (transaction == null) {
 
