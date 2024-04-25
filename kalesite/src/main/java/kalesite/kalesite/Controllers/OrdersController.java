@@ -407,7 +407,7 @@ public class OrdersController {
             String paymeUrl = "https://checkout.paycom.uz";
             String merchantId = "65e2f91cf4193eeca0afd4b0";
             long amount = (long) (orderTotalSum * 100); // тиины
-            String orderId = order.getId().toString();
+            String orderId = order.getCode();
             String returnUrl = "https://kale.mdholding.uz/profile/purchases-history";
 
             String data = "m=" + merchantId + ";ac.KaleUz=" + orderId + ";a=" + amount + ";c=" + returnUrl;
