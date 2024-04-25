@@ -359,7 +359,7 @@ public class OrdersController {
 
         BillingUrl billingUrl = new BillingUrl();
 
-        if (order.getPaymentType() == 2 || order.getPaymentType() == 1) {
+        if (order.getPaymentType() == 2) {
 
             billingUrl.setBilling_url("https://my.click.uz/services/pay?service_id=28420&merchant_id=11369&return_url=https://kale.mdholding.uz/profile/purchases-history&amount=" + orderTotalSum + "&transaction_param=" + order.getId());
         }
@@ -394,7 +394,7 @@ public class OrdersController {
 
             billingUrl.setBilling_url("https://kale.mdholding.uz/profile/purchases-history");
         }
-        /*else if (order.getPaymentType() == 1) {
+        else if (order.getPaymentType() == 1) {
 
             String paymeUrl = "https://checkout.paycom.uz";
             String merchantId = "65e2f91cf4193eeca0afd4b0";
@@ -408,7 +408,7 @@ public class OrdersController {
             String url = paymeUrl + "/" + encodedData;
 
             billingUrl.setBilling_url(url);
-        }*/
+        }
 
         return ResponseEntity.ok(billingUrl);
     }
