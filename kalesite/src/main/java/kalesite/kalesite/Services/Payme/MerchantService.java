@@ -130,9 +130,9 @@ public class MerchantService {
         throw new UnableCompleteException("Unable to complete operation", -31008, "transaction");
     }
 
-    public void ifTransactionWasSuccessfullyPerformed(String id) throws UnableCompleteException {
+    public void ifTransactionWasSuccessfullyPerformed(OrderTransaction transaction) throws UnableCompleteException {
 
-        Order_Orders order = order_ordersRepository.findById(Long.valueOf(id)).orElseThrow(() -> new UnableCompleteException("Заказа В Базе Не Существует!", -31008, "transaction"));
+        Order_Orders order = order_ordersRepository.findById(Long.valueOf(transaction.getOrder().getPaycomId())).orElseThrow(() -> new UnableCompleteException("Заказа В Базе Не Существует!", -31008, "transaction"));
 
         List<Order_Order_Products> order_order_productsList = order_order_productsRepository.findAllByOrderId(order);
 
@@ -217,7 +217,7 @@ public class MerchantService {
                 }
                 else {
 
-                    ifTransactionWasSuccessfullyPerformed(id);
+                    ifTransactionWasSuccessfullyPerformed(transaction);
 
                     transaction.setState(TransactionState.STATE_DONE);
                     transaction.setPerformTimes(new Date());
