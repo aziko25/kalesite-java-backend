@@ -312,11 +312,11 @@ public class OrdersController {
             orderProducts.setGuid(UUID.randomUUID());
             orderProducts.setCreatedAt(LocalDateTime.now());
             orderProducts.setQuantity(product.getQuantity());
-            orderProducts.setOrderPrice(product.getOrderPrice() * product.getQuantity());
 
             Product_Products productEntity = productProductsRepository.findById(product.getProduct())
                     .orElseThrow(() -> new EntityNotFoundException("Product not found with ID: " + product.getProduct()));
 
+            orderProducts.setOrderPrice(productEntity.getPrice() * product.getQuantity());
             orderProducts.setProductId(productEntity);
             orderProducts.setDiscount(productEntity.getDiscount());
 
