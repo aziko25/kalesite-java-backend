@@ -364,7 +364,7 @@ public class OrdersController {
 
         if (order.getPaymentType() == 2) {
 
-            billingUrl.setBilling_url("https://my.click.uz/services/pay?service_id=28420&merchant_id=11369&return_url=https://kale.mdholding.uz/profile/purchases-history&amount=" + orderTotalSum + "&transaction_param=" + order.getId());
+            billingUrl.setBilling_url("https://my.click.uz/services/pay?service_id=28420&merchant_id=11369&return_url=https://kale.uz/profile/purchases-history&amount=" + orderTotalSum + "&transaction_param=" + order.getId());
         }
         else if (order.getPaymentType() == 3) {
 
@@ -395,7 +395,7 @@ public class OrdersController {
 
             telegramBot.sendMessage(message);
 
-            billingUrl.setBilling_url("https://kale.mdholding.uz/profile/purchases-history");
+            billingUrl.setBilling_url("https://kale.uz/profile/purchases-history");
         }
         else if (order.getPaymentType() == 1) {
 
@@ -412,7 +412,7 @@ public class OrdersController {
             String merchantId = "65e2f91cf4193eeca0afd4b0";
 
             String orderId = order.getId().toString();
-            String returnUrl = "https://kale.mdholding.uz/profile/purchases-history";
+            String returnUrl = "https://kale.uz/profile/purchases-history";
 
             String data = "m=" + merchantId + ";ac.KaleUz=" + orderId + ";a=" + amount + ";c=" + returnUrl;
             String encodedData = Base64.getEncoder().encodeToString(data.getBytes());
