@@ -51,7 +51,7 @@ public class ProductsServices {
 
     @Transactional
     @SuppressWarnings("unchecked")
-    @Scheduled(fixedDelay = 180000, initialDelay = 1000)
+    //@Scheduled(fixedDelay = 180000, initialDelay = 1000)
     public void insertFetchedProductsJdbcTemplateOptimized() {
 
         long startTime = System.currentTimeMillis();
@@ -274,7 +274,8 @@ public class ProductsServices {
         }
     }
 
-    @Scheduled(cron = "0 0 1 * * ?")
+    //@Scheduled(cron = "0 0 1 * * ?")
+    @Scheduled(fixedDelay = 180000, initialDelay = 1000)
     public void updateAllPhotos() {
 
         long startTime = System.currentTimeMillis();
@@ -288,7 +289,7 @@ public class ProductsServices {
         int count = 0;
         for (String code : productCodes) {
             try {
-                String encodedCode = URLEncoder.encode(code, StandardCharsets.UTF_8.toString());
+                String encodedCode = URLEncoder.encode(code, StandardCharsets.UTF_8);
 
                 // Then, replace each + with %20
                 encodedCode = encodedCode.replaceAll("\\+", "%20");
@@ -334,7 +335,7 @@ public class ProductsServices {
     }
 
     private List<String> fetchProductCodes() {
-        String sql = "SELECT code FROM Product_Product where photo IS NULL;";
+        String sql = "SELECT code FROM Product_Product where photo IS NULL OR photo = '';";
         return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getString("code"));
     }
 
