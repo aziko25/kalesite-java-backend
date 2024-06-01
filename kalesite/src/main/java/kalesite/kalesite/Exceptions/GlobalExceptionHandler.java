@@ -1,8 +1,7 @@
 package kalesite.kalesite.Exceptions;
 
-import org.springframework.context.annotation.ComponentScan;
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -61,6 +60,7 @@ public class GlobalExceptionHandler {
         return new ErrorResponseWrapper(errorResponse);
     }
 
+    @Getter
     static class ErrorResponseWrapper {
 
         private final ErrorResponse error;
@@ -69,11 +69,9 @@ public class GlobalExceptionHandler {
             this.error = error;
         }
 
-        public ErrorResponse getError() {
-            return error;
-        }
     }
 
+    @Getter
     static class ErrorResponse {
 
         private final String jsonrpc;
@@ -88,18 +86,5 @@ public class GlobalExceptionHandler {
             this.data = data;
         }
 
-        public int getCode() {
-            return code;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public String getData() {
-            return data;
-        }
-
-        public String getJsonrpc() { return jsonrpc; }
     }
 }
