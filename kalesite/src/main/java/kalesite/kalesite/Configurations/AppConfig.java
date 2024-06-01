@@ -18,9 +18,10 @@ public class AppConfig {
         dataSource.setDriverClassName("org.postgresql.Driver");
 
         //dataSource.setUrl("jdbc:postgresql://localhost:5432/kalesite");
-        dataSource.setUrl("jdbc:postgresql://159.89.23.51:5433/kale");
         //dataSource.setUsername("postgres");
         //dataSource.setPassword("bestuser");
+
+        dataSource.setUrl("jdbc:postgresql://159.89.23.51:5433/kale");
         dataSource.setUsername("kale");
         dataSource.setPassword("!1234567A@kale");
 
