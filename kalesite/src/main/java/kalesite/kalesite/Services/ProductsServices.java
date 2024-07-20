@@ -245,19 +245,22 @@ public class ProductsServices {
     }
 
     private void batchDeleteProducts(List<String> codesToDelete) {
-        String sql = "DELETE FROM Product_Product WHERE code = ?";
+        // Now delete the products from product_product
+        if (!codesToDelete.isEmpty()) {
+            String deleteProductSql = "DELETE FROM product_product WHERE code = ?";
 
-        this.jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
-            @Override
-            public void setValues(PreparedStatement ps, int i) throws SQLException {
-                ps.setString(1, codesToDelete.get(i));
-            }
+            this.jdbcTemplate.batchUpdate(deleteProductSql, new BatchPreparedStatementSetter() {
+                @Override
+                public void setValues(PreparedStatement ps, int i) throws SQLException {
+                    ps.setString(1, codesToDelete.get(i));
+                }
 
-            @Override
-            public int getBatchSize() {
-                return codesToDelete.size();
-            }
-        });
+                @Override
+                public int getBatchSize() {
+                    return codesToDelete.size();
+                }
+            });
+        }
     }
 
     private Long getOrInsertSubcategoryId(String categoryTitle) {
