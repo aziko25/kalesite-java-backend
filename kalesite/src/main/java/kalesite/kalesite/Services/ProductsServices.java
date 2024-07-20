@@ -83,6 +83,7 @@ public class ProductsServices {
 
             List<Map<String, Object>> newProducts = new ArrayList<>();
             List<Map<String, Object>> updateProducts = new ArrayList<>();
+            Set<String> fetchedCodes = new HashSet<>(); // Store all fetched codes
             Set<String> duplicateCodes = new HashSet<>(); // Track duplicates found during processing
 
             Integer count = 0;
@@ -90,6 +91,7 @@ public class ProductsServices {
                 System.out.println(count);
                 count++;
                 String code = (String) product.get("Код");
+                fetchedCodes.add(code); // Add each fetched code to the set
 
                 // Check against the database counts to find pre-existing duplicates
                 assert codeCounts != null;
@@ -115,6 +117,27 @@ public class ProductsServices {
                 mainTelegramBot.sendMessage(message);
             }
 
+            // Identify and delete products not present in the fetched codes
+            List<String> codesToDelete = new ArrayList<>();
+            assert codeCounts != null;
+            for (String code : codeCounts.keySet()) {
+                if (!fetchedCodes.contains(code)) {
+                    codesToDelete.add(code);
+                }
+            }
+
+            if (!codesToDelete.isEmpty()) {
+
+                SendMessage message = new SendMessage();
+
+                message.setChatId(chatId);
+                message.setText("Deleted Products Count: " + codesToDelete.size());
+
+                mainTelegramBot.sendMessage(message);
+
+                batchDeleteProducts(codesToDelete);
+            }
+
             batchInsertNewProducts(newProducts);
             batchUpdateExistingProducts(updateProducts);
 
@@ -122,7 +145,6 @@ public class ProductsServices {
             long timeSpent = (endTime - startTime) / 1000;
 
             if (lastMessageIdMap.containsKey(chatId)) {
-
                 Integer lastMessageId = lastMessageIdMap.get(chatId);
 
                 DeleteMessage deleteMessage = new DeleteMessage();
@@ -143,14 +165,12 @@ public class ProductsServices {
             try {
                 Integer messageId = mainTelegramBot.execute(message).getMessageId();
                 lastMessageIdMap.put(chatId, messageId);
-            }
-            catch (TelegramApiException e) {
+            } catch (TelegramApiException e) {
                 e.printStackTrace();
             }
 
             System.out.println("Operation completed in " + timeSpent + " seconds!");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -161,7 +181,6 @@ public class ProductsServices {
     private String chatId;
 
     private void batchInsertNewProducts(List<Map<String, Object>> newProducts) {
-
         String sql = """
             INSERT INTO Product_Product ("isTop", status, created_at, title, title_ru, code, 
                                         unit, size, description, description_ru, manufacturer, manufacturer_ru, brand, 
@@ -169,7 +188,6 @@ public class ProductsServices {
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""";
 
         this.jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
-
             @Override
             public void setValues(PreparedStatement ps, int i) throws SQLException {
                 Map<String, Object> product = newProducts.get(i);
@@ -192,12 +210,9 @@ public class ProductsServices {
                 ps.setDouble(17, ((Number) product.get("ЦенаСоСкидкой")).doubleValue()); // discount_price
                 ps.setLong(18, getOrInsertSubcategoryId((String) product.get("Категория"))); // subcategory_id
                 ps.setObject(19, UUID.randomUUID());
-
                 double price = ((Number) product.get("Цена")).doubleValue(); // price
                 double discountPrice = ((Number) product.get("ЦенаСоСкидкой")).doubleValue(); // discount_price
-
                 double salePercent = ((price - discountPrice) / price) * 100;
-
                 ps.setDouble(20, salePercent);
             }
 
@@ -208,16 +223,12 @@ public class ProductsServices {
         });
     }
 
-
     private void batchUpdateExistingProducts(List<Map<String, Object>> updateProducts) {
-
         String sql = "UPDATE Product_Product SET quantity = ?, price = ?, \"discountPrice\" = ? WHERE code = ?";
 
         this.jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
-
             @Override
             public void setValues(PreparedStatement ps, int i) throws SQLException {
-
                 Map<String, Object> product = updateProducts.get(i);
                 // Assume "Остаток" and "Цена" fields exist
                 ps.setInt(1, ((Number) product.get("Остаток")).intValue());
@@ -233,6 +244,21 @@ public class ProductsServices {
         });
     }
 
+    private void batchDeleteProducts(List<String> codesToDelete) {
+        String sql = "DELETE FROM Product_Product WHERE code = ?";
+
+        this.jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                ps.setString(1, codesToDelete.get(i));
+            }
+
+            @Override
+            public int getBatchSize() {
+                return codesToDelete.size();
+            }
+        });
+    }
 
     private Long getOrInsertSubcategoryId(String categoryTitle) {
 
